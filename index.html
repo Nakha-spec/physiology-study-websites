@@ -539,6 +539,7 @@
             border-bottom: 1px solid var(--border);
             background: rgba(255, 255, 255, 0.3);
             flex-shrink: 0;
+            flex-wrap: wrap;
         }
         .notes-tabs .tab-btn {
             padding: 14px 28px;
@@ -728,6 +729,7 @@
             font-weight: 500;
             border-bottom: 2px solid transparent;
             transition: border 0.15s;
+            cursor: pointer;
         }
         .cheat-content .toc a:hover {
             border-bottom-color: var(--danger);
@@ -803,6 +805,86 @@
         }
         .cheat-content .footer a:hover {
             text-decoration: underline;
+        }
+
+        /* ============================================================
+               APPLIED QUESTIONS TAB
+               ============================================================ */
+        .applied-content .aq-section {
+            margin-bottom: 2.2rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 2px solid var(--border);
+        }
+        .applied-content .aq-section:last-child {
+            border-bottom: none;
+        }
+        .applied-content .aq-section h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 0.5rem 0;
+            border-left: 6px solid var(--danger);
+            padding-left: 14px;
+        }
+        .applied-content .aq-section .aq-q {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0.8rem 0 0.2rem 0;
+            font-size: 1.05rem;
+        }
+        .applied-content .aq-section .aq-q .marks {
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-left: 6px;
+        }
+        .applied-content .aq-section .aq-sub {
+            padding-left: 1.2rem;
+            margin: 0.2rem 0 0.4rem 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+        .applied-content .aq-section .aq-sub strong {
+            color: var(--text-primary);
+        }
+        .applied-content .aq-mcq-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 30px;
+            margin: 12px 0 8px;
+        }
+        .applied-content .aq-mcq-grid .mcq-item {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            transition: 0.2s;
+        }
+        .applied-content .aq-mcq-grid .mcq-item:hover {
+            background: var(--bg-card);
+            box-shadow: var(--shadow);
+        }
+        .applied-content .aq-mcq-grid .mcq-item .mcq-q {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.92rem;
+            margin-bottom: 4px;
+        }
+        .applied-content .aq-mcq-grid .mcq-item .mcq-opts {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin: 4px 0 6px;
+            padding-left: 12px;
+        }
+        .applied-content .aq-mcq-grid .mcq-item .mcq-opts li {
+            list-style: none;
+            padding: 1px 0;
+        }
+
+        @media (max-width: 700px) {
+            .applied-content .aq-mcq-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* ============================================================
@@ -1667,7 +1749,7 @@
             </div>
             <div class="home-footer-brand">
                 <p><strong>Crucial MedPrep™</strong></p>
-                <p><em>Developed by <strong> Tanaka Muzamayi</strong></em></p>
+                <p><em>Developed by <strong>Tanaka Muzamayi</strong></em></p>
                 <p><strong>Empowering Medical Students Through Digital Learning</strong></p>
             </div>
         </div>
@@ -1732,6 +1814,7 @@
                 <div class="notes-tabs">
                     <button class="tab-btn active" data-tab="crucial">📘 Crucial Notes</button>
                     <button class="tab-btn" data-tab="cheat">⚡ Stark Cheat Codes</button>
+                    <button class="tab-btn" data-tab="applied">📝 Applied Questions</button>
                 </div>
                 <div id="tab-crucial" class="notes-tab-content">
                     <h2>📚 Respiratory Physiology – Complete Revision Notes</h2>
@@ -2316,7 +2399,7 @@
                     <div style="margin-top:-0.8rem;margin-bottom:1.5rem;font-size:0.95rem;color:var(--text-muted);">
                         <i class="fas fa-file-alt"></i> Full, unabridged notes – verbatim from source
                     </div>
-                    <nav class="toc">
+                    <nav class="toc" id="cheatToc">
                         <strong><i class="fas fa-list-ul"></i> Contents</strong>
                         <a href="#cheat-sec1">Structure &amp; Function</a>
                         <a href="#cheat-sec2">Pulmonary Function Testing</a>
@@ -3880,6 +3963,67 @@
                         <span><i class="fas fa-print"></i> <a href="#" onclick="window.print();return false;">Print / PDF</a></span>
                     </div>
                 </div>
+                <div id="tab-applied" class="notes-tab-content applied-content hidden">
+                    <h2>📝 Applied Practical Questions</h2>
+                    <div class="notes-subtitle">Exam-style questions with mark allocations to test your understanding.</div>
+
+                    <!-- Set 1 -->
+                    <div class="aq-section">
+                        <h3>Applied Practical Questions — Set 1</h3>
+
+                        <div class="aq-q">1. A young woman is found tachypneic with Kussmaul acidotic breathing. She is a known type 1 diabetes patient who missed her insulin doses for the past week. Her arterial blood sample yields the following values: pH 7.2, HCO₃ 13 mmol/L, PₐCO₂ 30 mmHg, SₚO₂ 100%.</div>
+                        <div class="aq-sub"><strong>a) (i)</strong> State the acid base-disorder which is mostly accurate for her condition. <span class="marks">(2 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> Metabolic acidosis.</div>
+                        <div class="aq-sub"><strong>a) (ii)</strong> State and explain whether there is compensation of the primary acid base disorder. <span class="marks">(3 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> Yes, there is partial compensation. The low PaCO₂ (30 mmHg) indicates respiratory compensation via hyperventilation (Kussmaul breathing) to blow off CO₂, but pH is still below normal so compensation is not complete.</div>
+                        <div class="aq-sub"><strong>a) (iii)</strong> What is the most likely diagnosis? <span class="marks">(1 mark)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> Diabetic ketoacidosis (DKA).</div>
+                        <div class="aq-sub"><strong>b)</strong> Which Respiratory centers are activated as a result of the young woman's condition. <span class="marks">(2 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> The <strong>peripheral chemoreceptors</strong> (carotid and aortic bodies) are activated by the metabolic acidosis (low pH). They stimulate the <strong>dorsal respiratory group (DRG)</strong> in the medulla to increase ventilation.</div>
+                        <div class="aq-sub"><strong>c)</strong> List major extracellular acid base buffers in the human body. <span class="marks">(2 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> Bicarbonate buffer, Phosphate buffer, Plasma protein buffer.</div>
+
+                        <div class="aq-q" style="margin-top:1.8rem;">2. Describe the factors which affect the movement of the gases across the Blood Gas Barrier, also paying particular attention to the Fick's law of diffusion.</div>
+                        <div class="aq-sub"><strong>a)</strong> Define P₅₀. <span class="marks">(2 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> P₅₀ is the partial pressure of oxygen at which haemoglobin is 50% saturated. It is a measure of haemoglobin's affinity for oxygen; a higher P₅₀ indicates lower affinity.</div>
+                        <div class="aq-sub"><strong>b)</strong> List the factors which increase the value of P₅₀. <span class="marks">(3 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> Increased temperature, Increased 2,3-BPG, Decreased pH (increased H⁺).</div>
+                    </div>
+
+                    <!-- Set 2 -->
+                    <div class="aq-section">
+                        <h3>Applied Practical Questions — Set 2</h3>
+
+                        <div class="aq-q">1. A 60-year-old man with a history of smoking presents with a chronic cough and breathlessness. His spirometry results show: FEV₁ = 45% predicted, FVC = 70% predicted, FEV₁/FVC = 50%.</div>
+                        <div class="aq-sub"><strong>a) (i)</strong> What type of lung disease is this? Explain your answer using the results. <span class="marks">(2 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> Obstructive lung disease. FEV₁/FVC ratio is 50%, which is < 70%, indicating obstructive defect. FEV₁ is severely reduced while FVC is also reduced but to a lesser extent.</div>
+                        <div class="aq-sub"><strong>a) (ii)</strong> What does a low FEV₁/FVC ratio tell you? <span class="marks">(2 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> It indicates airway obstruction; the patient cannot exhale forcefully due to narrowed airways, reducing the volume of air that can be expelled in the first second relative to the total forced vital capacity.</div>
+                        <div class="aq-sub"><strong>a) (iii)</strong> How does smoking lead to this type of lung problem? <span class="marks">(2 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> Smoking causes chronic inflammation, proteolytic enzyme release (elastase), and oxidative stress, which destroy alveolar walls and elastic fibres (emphysema). It also causes mucus hypersecretion and airway narrowing (chronic bronchitis).</div>
+                        <div class="aq-sub"><strong>b)</strong> Which Sensors detect high Carbon dioxide levels? <span class="marks">(2 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> Central chemoreceptors (ventral medulla) and peripheral chemoreceptors (carotid and aortic bodies).</div>
+                        <div class="aq-sub"><strong>c)</strong> Describe the changes expected in FEV₁, FVC and FEV₁/FVC ratio in interstitial lung fibrosis (restrictive lung disease). <span class="marks">(2 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> FEV₁ and FVC are both reduced proportionally, so the FEV₁/FVC ratio remains normal or is elevated (> 80%).</div>
+
+                        <div class="aq-q" style="margin-top:1.8rem;">2.</div>
+                        <div class="aq-sub"><strong>a)</strong> List the three major forms in which carbon dioxide is carried in blood. <span class="marks">(3 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> 1. Bicarbonate (HCO₃⁻), 2. Carbamino compounds (bound to haemoglobin as carbaminohemoglobin), 3. Dissolved CO₂.</div>
+                        <div class="aq-sub"><strong>b)</strong> Which form carries the majority of CO₂ and how is formed? <span class="marks">(2 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> Bicarbonate carries ~70% of CO₂. It is formed by the hydration of CO₂ catalyzed by carbonic anhydrase in red blood cells: CO₂ + H₂O ⇌ H₂CO₃ ⇌ H⁺ + HCO₃⁻.</div>
+                        <div class="aq-sub"><strong>c)</strong> What is the Haldane effect, and how does it help CO₂ transport? <span class="marks">(3 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> The Haldane effect states that deoxygenated haemoglobin has a higher affinity for CO₂ and H⁺ than oxygenated haemoglobin. In tissues, as O₂ is released, Hb binds more CO₂ and H⁺, enhancing CO₂ transport. In lungs, O₂ loading releases CO₂ for excretion.</div>
+                        <div class="aq-sub"><strong>d)</strong> Mention the two main forms of how oxygen is transported in blood and their approximate proportions. <span class="marks">(2 marks)</span></div>
+                        <div class="aq-sub" style="font-size:0.9rem;color:var(--text-muted);padding-left:1.8rem;">→ <strong>Answer:</strong> 1. Bound to haemoglobin (oxyhaemoglobin) – ~98.5%. 2. Dissolved in plasma – ~1.5%.</div>
+                    </div>
+
+                    <!-- MCQs – only questions, no answers -->
+                    <div class="aq-section">
+                        <h3>Respiratory Physiology MCQs</h3>
+                        <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px;">Answer the following multiple-choice questions. Select all that apply.</div>
+                        <div class="aq-mcq-grid" id="mcqContainer"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -3960,7 +4104,8 @@
 
         <!-- ========== FOOTER ========== -->
         <div class="footer-credit">
-            <p>© 2026 <strong>Crucial</strong>. All rights reserved.</p>
+            <p>© 2026 <strong>Crucial MedPrep</strong>. All rights reserved.</p>
+            <p>Developed by <strong>Tanaka Muzamayi</strong></p>
             <p class="disclaimer">⚠️ AI‑generated content – always verify with your lecturers and official BMS112 materials.</p>
         </div>
     </div>
@@ -3986,7 +4131,8 @@
         const tabBtns = document.querySelectorAll('.tab-btn');
         const tabContents = {
             crucial: document.getElementById('tab-crucial'),
-            cheat: document.getElementById('tab-cheat')
+            cheat: document.getElementById('tab-cheat'),
+            applied: document.getElementById('tab-applied')
         };
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -5920,6 +6066,240 @@
             puzzleInitUI();
             puzzleInited = true;
         }
+
+        // ============================================================
+        // FIX STARK CHEAT CODES TOC – smooth scroll with tab switch
+        // ============================================================
+        document.querySelectorAll('.cheat-content .toc a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (!targetEl) return;
+
+                // Switch to cheat tab if not active
+                const cheatTabBtn = document.querySelector('.tab-btn[data-tab="cheat"]');
+                if (cheatTabBtn && !cheatTabBtn.classList.contains('active')) {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    cheatTabBtn.classList.add('active');
+                    Object.keys(tabContents).forEach(key => {
+                        tabContents[key].classList.toggle('hidden', key !== 'cheat');
+                    });
+                }
+
+                // Scroll to target inside the cheat tab content container
+                setTimeout(() => {
+                    const container = targetEl.closest('.notes-tab-content');
+                    if (container) {
+                        const offsetTop = targetEl.offsetTop - container.offsetTop - 20;
+                        container.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    } else {
+                        targetEl.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 150);
+            });
+        });
+
+        // ============================================================
+        // APPLIED QUESTIONS – MCQs (only questions, no answers)
+        // ============================================================
+        const mcqData = [
+            { q: "Concerning the mechanics of breathing:", opts: [
+                    "The external intercostal muscles contract on expiration",
+                    "The diaphragm contributes 50% to respiratory movements",
+                    "Quiet expiration is passive",
+                    "Intrapleural pressure becomes more negative during inspiration",
+                    "The sternocleidomastoid is an accessory muscle of inspiration"
+                ] },
+            { q: "Compliance:", opts: [
+                    "Is change in lung volume per unit change in pressure",
+                    "Normally is 0.2 L/cmH₂O",
+                    "Is higher during inflation than deflation",
+                    "Is decreased in emphysema",
+                    "Is increased in pulmonary fibrosis"
+                ] },
+            { q: "Ventilation perfusion ratio:", opts: [
+                    "Normal value for the whole lung is 0.8",
+                    "Is higher in the lung apices",
+                    "Is infinite in the dead space",
+                    "Regional differences are solely due to gravity",
+                    "Mismatch may cause hypoxia"
+                ] },
+            { q: "Surfactant:", opts: [
+                    "Main component is DPPC",
+                    "Is composed entirely of lipids and does not contain any carbohydrates",
+                    "Composed primarily of neural lipids",
+                    "Prevents pulmonary edema",
+                    "Is manufactured by type II pneumocytes"
+                ] },
+            { q: "Concerning lung volumes, capacities and ratios:", opts: [
+                    "Expiratory reserve volume is defined as the volume of air expired in excess of tidal volume",
+                    "Normal Functional Residual Capacity is 2.5 L",
+                    "Vital Capacity = IRV + TV + ERV",
+                    "FEV₁/FVC ratio is reduced in pulmonary edema",
+                    "Peak Expiratory flow rate is reduced in asthma"
+                ] },
+            { q: "The following lung indices decrease with age:", opts: [
+                    "Functional Residual Capacity",
+                    "Vital Capacity",
+                    "Closing Capacity",
+                    "Physiologic dead space",
+                    "Anatomic dead space"
+                ] },
+            { q: "The following are correctly matched:", opts: [
+                    "Tidal Volume : Spirometer",
+                    "Dead space : Nitrogen Wash out",
+                    "Forced Vital Capacity : Spirometer",
+                    "Forced Vital Capacity : Body plethysmograph",
+                    "Residual Volume : Body plethysmograph"
+                ] },
+            { q: "Lung airway resistance:", opts: [
+                    "Is highest in medium sized airways",
+                    "Varies with lung volumes",
+                    "Is decreased by β₂ adrenergic receptor stimulation",
+                    "Is decreased by surfactant",
+                    "Increases favour turbulent flow"
+                ] },
+            { q: "Pulmonary stretch receptors:", opts: [
+                    "Are present in the airways",
+                    "Send their afferents through the vagus nerve",
+                    "Are fast adapting",
+                    "Mediate the Herring-Breuer inflation reflex",
+                    "Respond to chemical irritants"
+                ] },
+            { q: "Concerning dead space:", opts: [
+                    "Anatomic dead space is about 150 ml in a normal subject",
+                    "In the normal subject physiologic dead space is 0 ml",
+                    "Anatomical dead space is measured using Fowler’s method",
+                    "May be increased by pulmonary embolism",
+                    "Breathing through a tube adds directly to the anatomic dead space"
+                ] },
+            { q: "True/false regarding carbon dioxide transport:", opts: [
+                    "Carbon dioxide transfer across the alveolar-capillary is flow limited",
+                    "Most CO₂ is transported as bicarbonate",
+                    "CO₂ is transported bound to haemoglobin as carboxyhaemoglobin",
+                    "The Haldane effect explains how binding of oxygen to haemoglobin reduces its affinity for carbon dioxide",
+                    "Impaired carbon dioxide elimination causes hypoventilation"
+                ] },
+            { q: "Concerning oxygen transport:", opts: [
+                    "It is flow limited",
+                    "More than 95% of oxygen circulates bound to haemoglobin",
+                    "Pulmonary capillary transit time of a red cell during exercise is too short to allow equilibration of oxygen",
+                    "May be impaired in anaemia",
+                    "Venous blood contains no oxygen"
+                ] },
+            { q: "The Chloride shift:", opts: [
+                    "Is mediated by the band 3 exchanger",
+                    "Is responsible for about 70% of bicarbonate formed in red cells entering plasma",
+                    "Occurs rapidly and is usually complete in 1 s",
+                    "Causes the crenation of red cells",
+                    "Occurs prominently in the lungs"
+                ] },
+            { q: "Haemoglobin:", opts: [
+                    "Normal concentration in blood is 14 to 16 mg/dL",
+                    "Fetal haemoglobin binds 2,3 BPG more avidly than adult haemoglobin",
+                    "One molecule of haemoglobin binds 4 oxygen atoms",
+                    "The P₅₀ is the arterial oxygen tension when haemoglobin is 50% saturated",
+                    "Plays a role as a buffer through the imidazole rings of the proline residues"
+                ] },
+            { q: "The following cause a right shift of the oxygen-haemoglobin dissociation curve:", opts: [
+                    "Increased pH",
+                    "Carbon monoxide poisoning",
+                    "2,3 BPG",
+                    "A shift to making fetal haemoglobin",
+                    "Moving to higher altitudes"
+                ] },
+            { q: "Venous blood:", opts: [
+                    "Has an oxygen saturation of 46%",
+                    "Has a higher pH than arterial blood",
+                    "Has a higher protein concentration that arterial blood",
+                    "Has a higher chloride than arterial blood",
+                    "Mixed venous blood is best sampled in the right atrium"
+                ] },
+            { q: "The following occur with acute acclimatisation to high altitudes:", opts: [
+                    "Respiratory acidosis secondary to hyperventilation",
+                    "Increased cardiac output",
+                    "Pulmonary edema",
+                    "Polycythemia",
+                    "Barrel shaped chest"
+                ] },
+            { q: "Concerning Hypoxia:", opts: [
+                    "PₐO₂ is normal in anaemic hypoxia",
+                    "Ischemic hypoxia is caused by inadequate tissue perfusion",
+                    "Cyanide poisoning causes histotoxic hypoxia",
+                    "Hypoxemia involves reduced PₐO₂",
+                    "Anaemic and ischemic hypoxia respond to 100% oxygen therapy"
+                ] },
+            { q: "Peripheral Chemoreceptors:", opts: [
+                    "Are found in the carotid and aortic sinuses",
+                    "Contain type I (glomus) cells which have ATP-sensitive K⁺ channels",
+                    "Have a linear response to PₐO₂ changes",
+                    "Respond to alkalosis",
+                    "Removal abolishes hypoxic drive of respiration"
+                ] },
+            { q: "Central Chemoreceptors:", opts: [
+                    "Stimulation causes hyperventilation",
+                    "Are stimulated during metabolic acidosis",
+                    "Are located in the medulla",
+                    "Removal abolishes H⁺ drive of respiration",
+                    "Respond to nicotine, lobeline and cyanide"
+                ] },
+            { q: "Regarding neural control of respiration:", opts: [
+                    "Voluntary system is located in the cerebral cortex and sends impulses to the respiratory motor neurons via the corticospinal tracts",
+                    "The pons is the major rhythm generator",
+                    "The pneumotaxic centre is located above the apneustic centre",
+                    "The dorsal and ventral groups of neurons are the pacemakers",
+                    "Section of the brain stem above the pons causes cessation of ventilation"
+                ] },
+            { q: "Concerning Neural Control of respiration:", opts: [
+                    "The Pre-Botzinger complex is found between the lateral reticular nucleus and nucleus ambiguus",
+                    "The apneustic centre prolongs inspiration",
+                    "The pneumotaxic centre has no settled function",
+                    "The ventral group of neurons fires only in forced expiration",
+                    "The dorsal group of neurons are active during expiration"
+                ] },
+            { q: "A patient presents to the hospital in an unconscious state. The following arterial blood gases are obtained: pH = 7.30, pCO₂ = 30, pO₂ = 68, O₂ sat. = 92%, HCO₃ = 12. The following may explain his condition:",
+                opts: [
+                    "Compensated respiratory alkalosis",
+                    "Compensated metabolic alkalosis",
+                    "Partially compensated metabolic acidosis",
+                    "Partially compensated respiratory acidosis",
+                    "Mixed acid base disorder",
+                    "Shock",
+                    "Diabetic ketoacidosis",
+                    "Atelectasis"
+                ] },
+            { q: "Pulmonary Circulation:", opts: [
+                    "Is described as a high capacitance low pressure system",
+                    "Stores about 500 ml of blood",
+                    "Vessels dilate in response to hypoxia",
+                    "Capillary pressure is about 10 mmHg",
+                    "Vessels are relaxed by vasopressin"
+                ] }
+        ];
+
+        function renderMCQs() {
+            const container = document.getElementById('mcqContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            mcqData.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'mcq-item';
+                let optsHtml = '<ul class="mcq-opts">';
+                item.opts.forEach((opt, i) => {
+                    optsHtml += `<li>${String.fromCharCode(65 + i)}) ${opt}</li>`;
+                });
+                optsHtml += '</ul>';
+                div.innerHTML = `
+                    <div class="mcq-q">${index+1}. ${item.q}</div>
+                    ${optsHtml}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Render MCQs when page loads
+        document.addEventListener('DOMContentLoaded', renderMCQs);
 
         // ============================================================
         // INIT – Show home screen
