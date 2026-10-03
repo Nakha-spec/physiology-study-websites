@@ -459,16 +459,22 @@ function needKid() {
 }
 
 /* ---------- data helpers shared by several pages ---------- */
+let heldFees = null;
+const feesMsg = h => `Results for Term ${h.term}, ${h.year} are held until at least ${Number(h.required_pct)}% of the fees due are paid. Paid so far: ${Number(h.paid_pct)}%. Please see the accounts office.`;
 async function latestReport(id) {
+  heldFees = null;
   for (let t = SETTINGS.current_term; t >= 1; t--) {
     const { data } = await sb.rpc("get_report", { p_student_id: id, p_term: t, p_year: thisYear });
+    if (data && data.hidden === "fees" && !heldFees) heldFees = data;
     if (data && data.marks && data.marks.length) return data;
   }
   return null;
 }
 async function reportsForYear(id, year) {
+  heldFees = null;
   return Promise.all([1, 2, 3].map(async t => {
     const { data } = await sb.rpc("get_report", { p_student_id: id, p_term: t, p_year: year });
+    if (data && data.hidden === "fees" && !heldFees) heldFees = data;
     return data && data.marks && data.marks.length ? data : null;
   }));
 }
@@ -768,14 +774,19 @@ const NAV = {
     { g: "Reports", items: ["reportcards"] },
     { g: "School", items: ["announcements"] }
   ],
+  accounts: [
+    { g: "", items: ["dashboard"] },
+    { g: "Fees", items: ["fees", "balances"] },
+    { g: "School", items: ["announcements"] }
+  ],
   admin: [
     { g: "", items: ["dashboard"] },
     { g: "People", items: ["students", "teachers", "parents", "registrations", "accounts"] },
-    { g: "Academics", items: ["classes", "timetable", "attendance", "marks", "comments", "analytics", "publish", "reportcards"] },
+    { g: "Academics", items: ["classes", "timetable", "attendance", "comments", "analytics", "publish", "reportcards"] },
     { g: "School", items: ["fees", "announcements", "settings"] }
   ]
 };
-const ROLE_LABEL = { admin: "Administrator", teacher: "Teacher", student: "Student", parent: "Parent" };
+const ROLE_LABEL = { admin: "Administrator", teacher: "Teacher", student: "Student", parent: "Parent", accounts: "Accounts office" };
 
 const applyTheme = () => document.body.classList.toggle("dark", lsGet("theme") === "dark");
 
@@ -1233,6 +1244,7 @@ function cardHtml(d) {
 function renderCard(d) {
   const out = q("rOut");
   if (d.hidden === "unpublished") { out.innerHTML = empty(`Results for Term ${d.term}, ${d.year} have not been released yet. They will appear here when the school publishes them.`); return; }
+  if (d.hidden === "fees") { out.innerHTML = empty(feesMsg(d)); return; }
   if (d.hidden === "parents_only") { out.innerHTML = empty("Your school shows results to parents and guardians only. Please ask your parent or guardian."); return; }
   if (!d.marks.length) { out.innerHTML = empty("No marks have been recorded for this student in this term."); return; }
   const notice = d.published === false ? `<div class="notice"><b>Not published yet.</b> Students and parents cannot see these results until you publish them.</div>` : "";
@@ -1369,7 +1381,7 @@ async function addDemo() {
         score: Math.max(20, Math.min(98, Math.round(strength + (Math.random() * 30 - 15))))
       }));
     });
-    const m = await sb.from("marks").insert(rows);
+    const m = await sb.rpc("demo_insert_marks", { p_rows: rows });
     if (m.error) throw m.error;
     await addDemoExtras(cls.data.id, subs.data, studs.data);
     toast("Demo data added. Open Report cards and type DEMO-0001.");
@@ -1391,8 +1403,7 @@ async function addDemoExtras(classId, subs, studs) {
     const times = [["07:30", "08:10"], ["08:10", "08:50"], ["09:10", "09:50"], ["09:50", "10:30"]], slots = [];
     for (let day = 1; day <= 5; day++) times.forEach((t, i) => slots.push({ class_id: classId, day, start_time: t[0], end_time: t[1], subject_id: subs[(day + i * 2) % subs.length].id, room: "Room " + (i + 1) }));
     await sb.from("timetable_slots").insert(slots);
-    await sb.from("fee_charges").insert([1, 2, 3].map(term => ({ class_id: classId, year: thisYear, term, description: "School fees", amount: 150 })));
-    await sb.from("fee_payments").insert(studs.slice(0, 6).map((st, i) => ({ student_id: st.id, year: thisYear, term: 1, amount: i % 3 === 0 ? 150 : 75, method: "Cash" })));
+    await sb.rpc("demo_seed_fees", { p_class: classId, p_year: thisYear });
     await sb.from("result_releases").upsert({ class_id: classId, year: thisYear, term: 1, release_at: new Date().toISOString() }, { onConflict: "class_id,year,term" });
     await sb.from("announcements").insert({ title: "Welcome to the new term", body: "Classes start at 7:30. Please check the timetable and make sure fees are up to date.", audience: "all", pinned: true });
   } catch (e) { /* the new tables may not exist yet; the core demo still works */ }
@@ -1414,7 +1425,7 @@ async function dashFamily() {
   const hasAtt = att && att.total > 0;
   const cards = [
     stat("Latest average", avg == null ? "-" : avg.toFixed(1) + "%",
-      rep ? `Term ${rep.term}${rep.position ? " &middot; " + ordinal(rep.position) + " of " + rep.class_size : ""}` : (me.role === "student" && SETTINGS.students_see_results === false ? "Shown to parents only" : "No published results yet"), "chart", avg == null ? "" : toneClass(avg)),
+      rep ? `Term ${rep.term}${rep.position ? " &middot; " + ordinal(rep.position) + " of " + rep.class_size : ""}` : (me.role === "student" && SETTINGS.students_see_results === false ? "Shown to parents only" : heldFees ? "Held until fees are paid" : "No published results yet"), "chart", avg == null ? (heldFees ? "warn" : "") : toneClass(avg)),
     stat("Attendance this year", hasAtt ? att.rate + "%" : "-", hasAtt ? `${att.absent} absent, ${att.late} late` : "No register yet", "check", hasAtt ? toneClass(att.rate) : ""),
     stat("Fees balance", bal == null ? "-" : money(bal), bal == null ? "Not set up yet" : bal > 0 ? "Outstanding" : "Paid up", "wallet", bal == null ? "" : bal > 0 ? "warn" : "good"),
     stat("New announcements", String(unread), unread ? "Open Announcements to read" : "You are up to date", "megaphone")
@@ -1423,7 +1434,7 @@ async function dashFamily() {
     ? hbars(rep.marks.slice().sort((a, b) => b.score - a.score).map(m => ({ label: m.subject, pct: Number(m.score), text: `${Number(m.score)} ${gradeOf(Number(m.score)).letter}`, tone: toneClass(Number(m.score)) })))
       + (rep.teacher_comment ? `<p class="hint" style="margin-top:1rem">Class teacher: ${esc(rep.teacher_comment)}</p>` : "")
       + `<div class="quick" style="margin-top:1rem"><button class="btn ghost sm" data-go="results">Performance</button><button class="btn ghost sm" data-go="reportcards">Report card</button></div>`
-    : empty("Results appear here when the school publishes them at the end of term."));
+    : empty(heldFees ? feesMsg(heldFees) : "Results appear here when the school publishes them at the end of term."));
   const todayPanel = panel("Today's lessons", todayDow()
     ? (slots.length ? slots.map(s => slotHtml(s)).join("") : empty("No timetable has been set for today."))
     : empty("No lessons on weekends."));
@@ -1490,7 +1501,7 @@ async function viewResults() {
     q("rpBox").innerHTML = empty("Loading...");
     const reps = await reportsForYear(k.id, year);
     if (activeKid !== k.id) return;
-    if (!reps.some(Boolean)) { q("rpBox").innerHTML = empty(me.role === "student" && SETTINGS.students_see_results === false ? "Your school shows results to parents and guardians only." : "No results have been published for this year yet. They appear here when the school releases them."); return; }
+    if (!reps.some(Boolean)) { q("rpBox").innerHTML = empty(heldFees ? feesMsg(heldFees) : me.role === "student" && SETTINGS.students_see_results === false ? "Your school shows results to parents and guardians only." : "No results have been published for this year yet. They appear here when the school releases them."); return; }
     let sel = reps.map(Boolean).lastIndexOf(true);
     const draw = () => {
       const r = reps[sel], avg = avgOf(r.marks);
@@ -1870,8 +1881,8 @@ async function dashAdmin() {
     <div class="grid2">
       ${panel(`Fees, term ${SETTINGS.current_term} ${thisYear}`, exp || col
         ? hbars([{ label: "Collected", pct: exp ? col / exp * 100 : 0, text: money(col), tone: "good" }, { label: "Expected", pct: 100, text: money(exp) }]) +
-          `<p style="margin-top:1rem">Outstanding: <b>${money(Math.max(0, exp - col))}</b></p><div class="quick"><button class="btn ghost sm" data-go="fees">Manage fees</button></div>`
-        : empty("No fees have been set for this term yet.") + `<div class="quick" style="margin-top:1rem"><button class="btn ghost sm" data-go="fees">Set up fees</button></div>`)}
+          `<p style="margin-top:1rem">Outstanding: <b>${money(Math.max(0, exp - col))}</b></p><div class="quick"><button class="btn ghost sm" data-go="fees">View fees</button></div>`
+        : empty("The accounts office has not set fees for this term yet."))}
       ${panel("Newest registrations", regs.length
         ? `<ul class="plain">${regs.map(r => `<li><b>${esc(r.students.full_name)}</b> <span class="hint">${esc(r.students.reg_number)} &middot; ${esc(clsName(r.students.class_id))}</span></li>`).join("")}</ul><div class="quick" style="margin-top:.8rem"><button class="btn ghost sm" data-go="registrations">See all</button></div>`
         : empty("No student has opened an account yet."))}
@@ -2075,13 +2086,13 @@ async function viewParentsAdmin() {
 async function viewAccounts() {
   const { data } = await sb.from("profiles").select("id,full_name,role").neq("role", "student").order("role").order("full_name").limit(300);
   const list = data || [];
-  main.innerHTML = pageHead("User accounts and roles", "Staff and parent accounts. Students open their own accounts.") + `
+  main.innerHTML = pageHead("User accounts and roles", "Staff and parent accounts. Students open their own accounts. Give the Accounts office role to the people who record school fees.") + `
     ${panel("Set a role", `
       <p>Create the login in Supabase first (Authentication, Users, Add user). Then choose its role here. Changing a role changes what that person can see straight away.</p>
       <form class="row" id="fRole">
         <label>Login email<input id="rEmail" type="email" required></label>
         <label>Full name<input id="rName" required></label>
-        <label>Role<select id="rRole"><option value="teacher">Teacher</option><option value="parent">Parent</option><option value="admin">Administrator</option></select></label>
+        <label>Role<select id="rRole"><option value="teacher">Teacher</option><option value="parent">Parent</option><option value="accounts">Accounts office</option><option value="admin">Administrator</option></select></label>
         <button class="btn" type="submit">Save role</button>
       </form>`)}
     ${panel(`Accounts (${list.length})`, list.length ? `<div class="tablewrap" style="margin:0"><table><thead><tr><th>Name</th><th>Role</th></tr></thead><tbody>
@@ -2094,10 +2105,11 @@ async function viewAccounts() {
   };
 }
 
-/* ---------- fees ---------- */
-async function viewFeesAdmin() {
+/* ---------- fees (accounts office edits, administrator reads) ---------- */
+async function viewFees() {
   await loadRef();
-  main.innerHTML = pageHead("Fees", "Set what each class pays and record payments.") + `<div id="fvBox">${empty("Loading...")}</div>`;
+  const edit = me.role === "accounts";
+  main.innerHTML = pageHead(edit ? "Fees" : "Fees overview", edit ? "Set what each class pays and record payments." : "A read-only view. The accounts office sets fees and records payments.") + `<div id="fvBox">${empty("Loading...")}</div>`;
   const [ov, chargesRes, payRes] = await Promise.all([
     sb.rpc("fees_overview", { p_year: thisYear, p_term: SETTINGS.current_term }).then(r => r.error ? null : r.data),
     sb.from("fee_charges").select("id,class_id,year,term,description,amount").order("year", { ascending: false }).order("term").limit(100),
@@ -2105,13 +2117,15 @@ async function viewFeesAdmin() {
   ]);
   const charges = chargesRes.data || [], pays = payRes.data || [];
   const exp = ov ? Number(ov.expected) : 0, col = ov ? Number(ov.collected) : 0;
+  const need = Number(SETTINGS.results_min_fees_percent ?? 0);
   q("fvBox").innerHTML = `
     <div class="cards">
       ${stat(`Expected, term ${SETTINGS.current_term}`, money(exp), "", "wallet")}
       ${stat("Collected", money(col), "", "check", "good")}
       ${stat("Outstanding", money(Math.max(0, exp - col)), "", "clock", exp - col > 0 ? "warn" : "good")}
+      ${stat("Results rule", need > 0 ? need + "%" : "Off", need > 0 ? "of fees must be paid to see results" : "Everyone sees published results", "shield")}
     </div>
-    <div class="grid2">
+    ${edit ? `<div class="grid2">
       ${panel("Record a payment", `
         <form id="fPay" class="stack">
           <label>Student reg number<input id="pReg" required></label>
@@ -2140,24 +2154,25 @@ async function viewFeesAdmin() {
           </div>
           <button class="btn" type="submit">Save fee</button>
         </form>`)}
-    </div>
-    ${panel("Fees set", charges.length ? `<div class="tablewrap" style="margin:0"><table><thead><tr><th>Class</th><th>Term</th><th>Description</th><th class="num">Amount</th><th></th></tr></thead><tbody>
-      ${charges.map(c => `<tr><td>${esc(clsName(c.class_id))}</td><td>Term ${c.term}, ${c.year}</td><td>${esc(c.description)}</td><td class="num">${money(c.amount)}</td><td class="num"><button class="btn danger" data-delchg="${c.id}">Delete</button></td></tr>`).join("")}
+    </div>` : ""}
+    ${panel("Fees set", charges.length ? `<div class="tablewrap" style="margin:0"><table><thead><tr><th>Class</th><th>Term</th><th>Description</th><th class="num">Amount</th>${edit ? "<th></th>" : ""}</tr></thead><tbody>
+      ${charges.map(c => `<tr><td>${esc(clsName(c.class_id))}</td><td>Term ${c.term}, ${c.year}</td><td>${esc(c.description)}</td><td class="num">${money(c.amount)}</td>${edit ? `<td class="num"><button class="btn danger" data-delchg="${c.id}">Delete</button></td>` : ""}</tr>`).join("")}
       </tbody></table></div>` : empty("No fees set yet."))}
     ${panel("Recent payments", pays.length ? `<div class="tablewrap" style="margin:0"><table><thead><tr><th>Date</th><th>Student</th><th>Term</th><th>Method</th><th class="num">Amount</th></tr></thead><tbody>
       ${pays.map(p => `<tr><td>${esc(niceDate(p.paid_on))}</td><td>${esc((p.students || {}).full_name || "-")} <span class="hint">${esc((p.students || {}).reg_number || "")}</span></td><td>Term ${p.term}, ${p.year}</td><td>${esc(p.method || "-")}</td><td class="num">${money(p.amount)}</td></tr>`).join("")}
       </tbody></table></div>` : empty("No payments recorded yet."))}`;
+  if (!edit) return;
   q("fPay").onsubmit = async e => {
     e.preventDefault();
     try {
-      const s = await findStudentByReg(q("pReg").value);
-      if (!s) return toast("No student has that registration number.", true);
-      const { error } = await sb.from("fee_payments").insert({ student_id: s.id, term: +q("pTerm").value, year: +q("pYear").value, amount: +q("pAmt").value, paid_on: q("pDate").value, method: q("pMethod").value, reference: q("pRef").value.trim() || null });
+      const st = await findStudentByReg(q("pReg").value);
+      if (!st) return toast("No student has that registration number.", true);
+      const { error } = await sb.from("fee_payments").insert({ student_id: st.id, term: +q("pTerm").value, year: +q("pYear").value, amount: +q("pAmt").value, paid_on: q("pDate").value, method: q("pMethod").value, reference: q("pRef").value.trim() || null });
       if (error) return toast(error.message, true);
-      const st = await feeStatement(s.id);
-      const bal = st ? st.terms.reduce((a, t) => a + Number(t.charged) - Number(t.paid), 0) : null;
-      toast(`Recorded ${money(q("pAmt").value)} for ${s.full_name}.${bal == null ? "" : " Balance: " + money(bal)}`);
-      viewFeesAdmin();
+      const f = await feeStatement(st.id);
+      const bal = f ? f.terms.reduce((a, t) => a + Number(t.charged) - Number(t.paid), 0) : null;
+      toast(`Recorded ${money(q("pAmt").value)} for ${st.full_name}.${bal == null ? "" : " Balance: " + money(bal)}`);
+      viewFees();
     } catch (err) { toast(err.message, true); }
   };
   q("fCharge").onsubmit = async e => {
@@ -2165,15 +2180,109 @@ async function viewFeesAdmin() {
     if (!q("cClass").value) return toast("Add a class first.", true);
     const { error } = await sb.from("fee_charges").insert({ class_id: +q("cClass").value, term: +q("cTerm").value, year: +q("cYear").value, description: q("cDesc").value.trim() || "School fees", amount: +q("cAmt").value });
     if (error) return toast(error.message, true);
-    toast("Fee saved."); viewFeesAdmin();
+    toast("Fee saved."); viewFees();
   };
   main.onclick = async e => {
     const b = e.target.closest("[data-delchg]");
     if (!b || !confirm("Delete this fee?")) return;
     const { error } = await sb.from("fee_charges").delete().eq("id", +b.dataset.delchg);
     if (error) return toast(error.message, true);
-    toast("Deleted."); viewFeesAdmin();
+    toast("Deleted."); viewFees();
   };
+}
+
+/* who has paid, who can see results, and exceptions */
+async function viewFeeBalances() {
+  await loadRef();
+  const edit = me.role === "accounts";
+  if (!ref.classes.length) { main.innerHTML = pageHead("Fee balances") + empty("Add a class first."); return; }
+  const need = Number(SETTINGS.results_min_fees_percent ?? 0);
+  main.innerHTML = pageHead("Fee balances", need > 0 ? `Students must have paid ${need}% of the fees due so far this year to see their results.` : "The results rule is switched off, so everyone sees published results.") + `
+    <div class="filters">
+      <label>Class<select id="fbClass">${idOpts(ref.classes, "name")}</select></label>
+      <label>Term<select id="fbTerm">${termOpts(SETTINGS.current_term)}</select></label>
+      <label>Year<input id="fbYear" type="number" value="${thisYear}" min="2000" max="2100"></label>
+      <label class="check"><input type="checkbox" id="fbHeld"> Show only students whose results are held</label>
+    </div>
+    <div id="fbBox">${empty("Loading...")}</div>`;
+  let rows = [], year = 0, term = 0;
+  const draw = () => {
+    const heldOnly = q("fbHeld").checked;
+    const list = rows.filter(r => !heldOnly || r.status === "held");
+    const held = rows.filter(r => r.status === "held").length;
+    const charged = rows.reduce((a, r) => a + r.charged, 0), paid = rows.reduce((a, r) => a + r.paid, 0);
+    q("fbBox").innerHTML = `
+      <div class="cards">
+        ${stat("Students", String(rows.length), "", "users")}
+        ${stat("Results held", String(held), need > 0 ? `below ${need}% paid` : "rule is off", "shield", held ? "warn" : "good")}
+        ${stat("Charged to date", money(charged), "", "wallet")}
+        ${stat("Paid to date", money(paid), "", "check", "good")}
+      </div>
+      <label class="hint" style="margin-bottom:1rem;display:block">Find a student <input id="fbSearch" placeholder="Name or reg number" style="margin-left:.5rem"></label>
+      <div class="tablewrap"><table><thead><tr><th>Student</th><th class="num">Charged</th><th class="num">Paid</th><th class="num">% paid</th><th>Results</th>${edit ? "<th></th>" : ""}</tr></thead><tbody>
+      ${list.map(r => `<tr data-find="${esc((r.name + " " + (r.reg || "")).toLowerCase())}"><td>${esc(r.name)}<br><span class="hint">${esc(r.reg || "")}</span></td>
+        <td class="num">${money(r.charged)}</td><td class="num">${money(r.paid)}</td><td class="num">${r.charged > 0 ? r.pct + "%" : "-"}</td>
+        <td>${r.status === "held" ? '<span class="tag bad">Held</span>' : r.status === "allowed" ? '<span class="tag warn">Allowed by accounts</span>' : '<span class="tag good">Fees cleared</span>'}</td>
+        ${edit ? `<td class="num">${r.status === "allowed" ? `<button class="btn ghost sm" data-unallow="${r.id}">Remove exception</button>` : r.status === "held" ? `<button class="btn ghost sm" data-allow="${r.id}">Allow results</button>` : ""}</td>` : ""}</tr>`).join("") || `<tr><td colspan="6">No students to show.</td></tr>`}
+      </tbody></table></div>`;
+    q("fbSearch").oninput = e => { const t = e.target.value.trim().toLowerCase(); q("fbBox").querySelectorAll("tbody tr[data-find]").forEach(tr => tr.hidden = t && !tr.dataset.find.includes(t)); };
+  };
+  const load = async () => {
+    const classId = +q("fbClass").value; year = +q("fbYear").value; term = +q("fbTerm").value;
+    q("fbBox").innerHTML = empty("Loading...");
+    const { data, error } = await sb.rpc("fee_balances", { p_class: classId, p_year: year, p_term: term });
+    if (error) { q("fbBox").innerHTML = empty(esc(error.message)); return; }
+    rows = (data || []).map(r => {
+      const charged = Number(r.charged), paid = Number(r.paid);
+      const meets = need <= 0 || charged <= 0 || paid >= charged * need / 100;
+      return { ...r, charged, paid, pct: charged > 0 ? Math.round(paid / charged * 100) : 100, status: meets ? "ok" : r.exception ? "allowed" : "held" };
+    });
+    draw();
+  };
+  ["fbClass", "fbTerm", "fbYear"].forEach(id => q(id).onchange = load);
+  q("fbHeld").onchange = draw;
+  if (edit) main.onclick = async e => {
+    const al = e.target.closest("[data-allow]"), un = e.target.closest("[data-unallow]");
+    if (al) {
+      const reason = prompt("Reason for allowing this student to see results (optional):");
+      if (reason === null) return;
+      const { error } = await sb.from("results_exceptions").upsert({ student_id: +al.dataset.allow, year, term, reason: reason.trim() || null }, { onConflict: "student_id,year,term" });
+      if (error) return toast(error.message, true);
+      toast("This student can now see their results."); load();
+    } else if (un) {
+      const { error } = await sb.from("results_exceptions").delete().eq("student_id", +un.dataset.unallow).eq("year", year).eq("term", term);
+      if (error) return toast(error.message, true);
+      toast("Exception removed."); load();
+    }
+  };
+  load();
+}
+
+async function dashAccounts() {
+  main.innerHTML = pageHead(`Good day, ${first(me.full_name)}`, "Accounts office") + `<div class="cards">${[1, 2, 3].map(() => `<div class="stat skel"></div>`).join("")}</div>`;
+  const [ov, pays, anns] = await Promise.all([
+    sb.rpc("fees_overview", { p_year: thisYear, p_term: SETTINGS.current_term }).then(r => r.error ? null : r.data),
+    sb.from("fee_payments").select("amount,paid_on,method,students(full_name,reg_number)").order("id", { ascending: false }).limit(6).then(r => r.error ? [] : (r.data || [])),
+    annList(3)
+  ]);
+  if (curModule !== "dashboard") return;
+  const exp = ov ? Number(ov.expected) : 0, col = ov ? Number(ov.collected) : 0, need = Number(SETTINGS.results_min_fees_percent ?? 0);
+  main.innerHTML = pageHead(`Good day, ${first(me.full_name)}`, `Accounts office &middot; Term ${SETTINGS.current_term}, ${thisYear}`) + `
+    <div class="cards">
+      ${stat("Expected this term", money(exp), "", "wallet")}
+      ${stat("Collected", money(col), exp ? Math.round(col / exp * 100) + "% of expected" : "", "check", "good")}
+      ${stat("Outstanding", money(Math.max(0, exp - col)), "", "clock", exp - col > 0 ? "warn" : "good")}
+      ${stat("Results rule", need > 0 ? need + "%" : "Off", need > 0 ? "of fees paid to see results" : "", "shield")}
+    </div>
+    <div class="grid2">
+      ${panel("Recent payments", pays.length ? `<ul class="plain">${pays.map(p => `<li><b>${money(p.amount)}</b> from ${esc((p.students || {}).full_name || "-")} <span class="hint">${esc(niceDate(p.paid_on))} &middot; ${esc(p.method || "")}</span></li>`).join("")}</ul>` : empty("No payments recorded yet."))}
+      <div>
+        ${panel("Quick actions", `<div class="quick">
+          <button class="btn" data-go="fees">${icon("wallet")} Record a payment</button>
+          <button class="btn ghost" data-go="balances">${icon("users")} Fee balances</button></div>`)}
+        ${panel("Latest announcements", anns.length ? `<ul class="plain">${anns.map(a => `<li><b>${esc(a.title)}</b><div class="hint">${esc(niceDate(a.created_at))}</div></li>`).join("")}</ul>` : empty("No announcements yet."))}
+      </div>
+    </div>`;
 }
 
 /* ---------- settings ---------- */
@@ -2194,6 +2303,8 @@ async function viewSettings() {
           <label>Current term<select id="sTerm">${termOpts(SETTINGS.current_term)}</select></label>
           <label>Currency symbol<input id="sCur" required maxlength="6" value="${esc(SETTINGS.currency || "US$")}" style="width:6rem"></label>
         </div>
+        ${"results_min_fees_percent" in SETTINGS ? `<label style="margin-top:1rem;max-width:22rem">Fees needed before results are shown (%)<input id="sMinFees" type="number" min="0" max="100" step="1" value="${Number(SETTINGS.results_min_fees_percent)}"></label>
+        <p class="hint">Students and parents see a term's results only when at least this share of the fees due so far this year has been paid. Use 0 to switch the rule off. The accounts office can allow individual students.</p>` : ""}
         ${"students_see_results" in SETTINGS ? `<label class="check" style="margin-top:1rem"><input type="checkbox" id="sStuSee" ${SETTINGS.students_see_results !== false ? "checked" : ""}> Students can see their own published results</label>
         <p class="hint">Untick this if only parents and guardians should see results. Students will then see a message to ask their parent.</p>` : ""}
         <p class="hint" style="margin-top:.8rem">Marks, attendance and fees are saved per year and term. Changing the current term only changes what the portal opens on.</p>`)}
@@ -2233,6 +2344,7 @@ async function viewSettings() {
       const row = { school_name: q("sName").value.trim(), motto: q("sMotto").value.trim() || null, logo_url: logo,
         current_year: +q("sYear").value, current_term: +q("sTerm").value, currency: q("sCur").value.trim(), grades: clean, updated_at: new Date().toISOString() };
       if (q("sStuSee")) row.students_see_results = q("sStuSee").checked;
+      if (q("sMinFees")) row.results_min_fees_percent = Math.max(0, Math.min(100, Number(q("sMinFees").value) || 0));
       const { error } = await sb.from("school_settings").update(row).eq("id", 1);
       if (error) throw error;
       applySettings(row);
@@ -2326,7 +2438,7 @@ async function viewPublish() {
 
 /* ===================== module registry: add new pages here ===================== */
 const isStaffRole = () => me.role === "admin" || me.role === "teacher";
-defineModule("dashboard", "Dashboard", "home", () => ({ student: dashFamily, parent: dashFamily, teacher: dashTeacher, admin: dashAdmin })[me.role]());
+defineModule("dashboard", "Dashboard", "home", () => ({ student: dashFamily, parent: dashFamily, teacher: dashTeacher, admin: dashAdmin, accounts: dashAccounts })[me.role]());
 defineModule("profile", "My profile", "user", viewProfile);
 defineModule("editprofile", "Edit profile", "user", viewEditProfile);
 defineModule("password", "Change password", "key", viewPassword);
@@ -2336,7 +2448,8 @@ defineModule("timetable", "Timetable", "cal", () => (isStaffRole() ? ttStaff : t
 defineModule("attendance", "Attendance", "check", () => (isStaffRole() ? attStaff : attFamily)(), r => r === "teacher" ? "Record attendance" : "Attendance");
 defineModule("results", "Results", "chart", viewResults, r => r === "parent" ? "Academic performance" : "Results and performance");
 defineModule("reportcards", "Report cards", "results", viewReports);
-defineModule("fees", "Fees", "wallet", () => (me.role === "admin" ? viewFeesAdmin : feesFamily)());
+defineModule("fees", "Fees", "wallet", () => (me.role === "admin" || me.role === "accounts" ? viewFees : feesFamily)(), r => r === "admin" ? "Fees overview" : "Fees");
+defineModule("balances", "Fee balances", "users", viewFeeBalances);
 defineModule("announcements", "Announcements", "megaphone", viewAnnouncements);
 defineModule("myclasses", "My classes", "users", viewMyClasses);
 defineModule("marks", "Enter marks", "pencil", viewMarks, r => r === "admin" ? "Marks" : "Enter marks");
