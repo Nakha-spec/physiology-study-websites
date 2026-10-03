@@ -277,6 +277,8 @@ h1.pg{font-size:1.8rem;margin-bottom:1rem}
   .batch .card{break-after:page;page-break-after:always;margin:0}
   .batch .card:last-child{break-after:auto;page-break-after:auto}
 }
+.notice{background:rgba(183,121,31,.15);border:1px solid var(--warn);border-radius:10px;padding:.7rem 1rem;margin-bottom:1rem}
+@media print{.notice{display:none!important}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 main > h2{margin-bottom:1rem}
@@ -769,7 +771,7 @@ const NAV = {
   admin: [
     { g: "", items: ["dashboard"] },
     { g: "People", items: ["students", "teachers", "parents", "registrations", "accounts"] },
-    { g: "Academics", items: ["classes", "timetable", "attendance", "marks", "comments", "analytics", "reportcards"] },
+    { g: "Academics", items: ["classes", "timetable", "attendance", "marks", "comments", "analytics", "publish", "reportcards"] },
     { g: "School", items: ["fees", "announcements", "settings"] }
   ]
 };
@@ -996,7 +998,11 @@ function viewMarks() {
     } catch (err) { return toast(err.message, true); }
     if (!studs.length) { box.innerHTML = empty("No students in this class yet."); return; }
     const byId = Object.fromEntries(marks.map(m => [m.student_id, m.score]));
-    box.innerHTML = `
+    const rel = await sb.from("result_releases").select("release_at").eq("class_id", classId).eq("year", year).eq("term", term).maybeSingle();
+    const relAt = rel.data ? new Date(rel.data.release_at) : null;
+    const relLine = relAt ? (relAt <= new Date() ? `<p class="notice">Term ${term} results for this class were published on ${esc(niceDate(rel.data.release_at))}. Students and parents can see changes you save now.</p>` : `<p class="notice">Term ${term} results for this class will be released on ${esc(niceDate(rel.data.release_at))}.</p>`)
+      : `<p class="hint" style="margin-bottom:1rem">These marks are private. Students and parents see them only after the administrator publishes the term's results.</p>`;
+    box.innerHTML = relLine + `
     <div class="filters"><label>Find a student<input id="mSearch" placeholder="Name or reg number"></label><span class="hint">${studs.length} students</span></div>
     <div class="tablewrap"><table>
       <thead><tr><th>Student</th><th>Reg number</th><th class="num">Mark out of 100</th><th>Grade</th></tr></thead>
@@ -1178,7 +1184,7 @@ async function viewReports() {
     const { data, error } = await sb.rpc("get_class_reports", { p_class_id: +q("rClass").value, p_term: +q("rTerm").value, p_year: +q("rYear").value });
     if (error) { q("rOut").innerHTML = ""; return toast(error.message, true); }
     if (!data.length) { q("rOut").innerHTML = empty("No marks have been recorded for this class in this term."); return; }
-    q("rOut").innerHTML = `
+    q("rOut").innerHTML = (data[0].published === false ? `<div class="notice"><b>Not published yet.</b> Students and parents cannot see these results until you publish them under Publish results.</div>` : "") + `
       <div class="card-actions" style="margin:0 0 1rem"><button class="btn" onclick="window.print()">Print all ${data.length} report cards</button>
       <span class="hint">One card per page. In the print window you can choose Save as PDF. Students with no marks are left out.</span></div>
       <div class="batch">${data.map(cardHtml).join("")}</div>`;
@@ -1226,8 +1232,11 @@ function cardHtml(d) {
 
 function renderCard(d) {
   const out = q("rOut");
+  if (d.hidden === "unpublished") { out.innerHTML = empty(`Results for Term ${d.term}, ${d.year} have not been released yet. They will appear here when the school publishes them.`); return; }
+  if (d.hidden === "parents_only") { out.innerHTML = empty("Your school shows results to parents and guardians only. Please ask your parent or guardian."); return; }
   if (!d.marks.length) { out.innerHTML = empty("No marks have been recorded for this student in this term."); return; }
-  out.innerHTML = cardHtml(d) + `<div class="card-actions"><button class="btn" onclick="window.print()">Print or save as PDF</button></div>`;
+  const notice = d.published === false ? `<div class="notice"><b>Not published yet.</b> Students and parents cannot see these results until you publish them.</div>` : "";
+  out.innerHTML = notice + cardHtml(d) + `<div class="card-actions"><button class="btn" onclick="window.print()">Print or save as PDF</button></div>`;
 }
 
 /* ---------- registrations (admin) ---------- */
@@ -1384,6 +1393,7 @@ async function addDemoExtras(classId, subs, studs) {
     await sb.from("timetable_slots").insert(slots);
     await sb.from("fee_charges").insert([1, 2, 3].map(term => ({ class_id: classId, year: thisYear, term, description: "School fees", amount: 150 })));
     await sb.from("fee_payments").insert(studs.slice(0, 6).map((st, i) => ({ student_id: st.id, year: thisYear, term: 1, amount: i % 3 === 0 ? 150 : 75, method: "Cash" })));
+    await sb.from("result_releases").upsert({ class_id: classId, year: thisYear, term: 1, release_at: new Date().toISOString() }, { onConflict: "class_id,year,term" });
     await sb.from("announcements").insert({ title: "Welcome to the new term", body: "Classes start at 7:30. Please check the timetable and make sure fees are up to date.", audience: "all", pinned: true });
   } catch (e) { /* the new tables may not exist yet; the core demo still works */ }
 }
@@ -1404,7 +1414,7 @@ async function dashFamily() {
   const hasAtt = att && att.total > 0;
   const cards = [
     stat("Latest average", avg == null ? "-" : avg.toFixed(1) + "%",
-      rep ? `Term ${rep.term}${rep.position ? " &middot; " + ordinal(rep.position) + " of " + rep.class_size : ""}` : "No results yet", "chart", avg == null ? "" : toneClass(avg)),
+      rep ? `Term ${rep.term}${rep.position ? " &middot; " + ordinal(rep.position) + " of " + rep.class_size : ""}` : (me.role === "student" && SETTINGS.students_see_results === false ? "Shown to parents only" : "No published results yet"), "chart", avg == null ? "" : toneClass(avg)),
     stat("Attendance this year", hasAtt ? att.rate + "%" : "-", hasAtt ? `${att.absent} absent, ${att.late} late` : "No register yet", "check", hasAtt ? toneClass(att.rate) : ""),
     stat("Fees balance", bal == null ? "-" : money(bal), bal == null ? "Not set up yet" : bal > 0 ? "Outstanding" : "Paid up", "wallet", bal == null ? "" : bal > 0 ? "warn" : "good"),
     stat("New announcements", String(unread), unread ? "Open Announcements to read" : "You are up to date", "megaphone")
@@ -1413,7 +1423,7 @@ async function dashFamily() {
     ? hbars(rep.marks.slice().sort((a, b) => b.score - a.score).map(m => ({ label: m.subject, pct: Number(m.score), text: `${Number(m.score)} ${gradeOf(Number(m.score)).letter}`, tone: toneClass(Number(m.score)) })))
       + (rep.teacher_comment ? `<p class="hint" style="margin-top:1rem">Class teacher: ${esc(rep.teacher_comment)}</p>` : "")
       + `<div class="quick" style="margin-top:1rem"><button class="btn ghost sm" data-go="results">Performance</button><button class="btn ghost sm" data-go="reportcards">Report card</button></div>`
-    : empty("Results will appear here once the teachers have entered marks."));
+    : empty("Results appear here when the school publishes them at the end of term."));
   const todayPanel = panel("Today's lessons", todayDow()
     ? (slots.length ? slots.map(s => slotHtml(s)).join("") : empty("No timetable has been set for today."))
     : empty("No lessons on weekends."));
@@ -1480,7 +1490,7 @@ async function viewResults() {
     q("rpBox").innerHTML = empty("Loading...");
     const reps = await reportsForYear(k.id, year);
     if (activeKid !== k.id) return;
-    if (!reps.some(Boolean)) { q("rpBox").innerHTML = empty("No results have been recorded for this year yet."); return; }
+    if (!reps.some(Boolean)) { q("rpBox").innerHTML = empty(me.role === "student" && SETTINGS.students_see_results === false ? "Your school shows results to parents and guardians only." : "No results have been published for this year yet. They appear here when the school releases them."); return; }
     let sel = reps.map(Boolean).lastIndexOf(true);
     const draw = () => {
       const r = reps[sel], avg = avgOf(r.marks);
@@ -2184,6 +2194,8 @@ async function viewSettings() {
           <label>Current term<select id="sTerm">${termOpts(SETTINGS.current_term)}</select></label>
           <label>Currency symbol<input id="sCur" required maxlength="6" value="${esc(SETTINGS.currency || "US$")}" style="width:6rem"></label>
         </div>
+        ${"students_see_results" in SETTINGS ? `<label class="check" style="margin-top:1rem"><input type="checkbox" id="sStuSee" ${SETTINGS.students_see_results !== false ? "checked" : ""}> Students can see their own published results</label>
+        <p class="hint">Untick this if only parents and guardians should see results. Students will then see a message to ask their parent.</p>` : ""}
         <p class="hint" style="margin-top:.8rem">Marks, attendance and fees are saved per year and term. Changing the current term only changes what the portal opens on.</p>`)}
       ${panel("Grading scale", `
         <p>Each row gives the lowest mark for a grade. Keep a row that starts at 0.</p>
@@ -2220,6 +2232,7 @@ async function viewSettings() {
       }
       const row = { school_name: q("sName").value.trim(), motto: q("sMotto").value.trim() || null, logo_url: logo,
         current_year: +q("sYear").value, current_term: +q("sTerm").value, currency: q("sCur").value.trim(), grades: clean, updated_at: new Date().toISOString() };
+      if (q("sStuSee")) row.students_see_results = q("sStuSee").checked;
       const { error } = await sb.from("school_settings").update(row).eq("id", 1);
       if (error) throw error;
       applySettings(row);
@@ -2230,6 +2243,86 @@ async function viewSettings() {
   };
 }
 
+
+/* ---------- publish results (admin) ---------- */
+async function viewPublish() {
+  await loadRef();
+  if (!ref.classes.length) { main.innerHTML = pageHead("Publish results") + empty("Add a class first under Classes and subjects."); return; }
+  main.innerHTML = pageHead("Publish results", "Students and parents see a term's results only after you publish them. Teachers can keep entering marks until then.") + `
+    <div class="filters">
+      <label>Year<input id="pbYear" type="number" value="${thisYear}" min="2000" max="2100"></label>
+      <label>Term<select id="pbTerm">${termOpts(SETTINGS.current_term)}</select></label>
+    </div>
+    ${panel("Release settings", `
+      <div class="row">
+        <label>Release on (leave empty to publish now)<input id="pbWhen" type="datetime-local"></label>
+        <label class="check"><input type="checkbox" id="pbAnn" checked> Post an announcement</label>
+      </div>
+      <p class="hint" style="margin-top:.7rem">Choose a future date and time to release results when the holidays start. Parents and students can then see them from that moment.</p>`)}
+    <div id="pbBox">${empty("Loading...")}</div>`;
+  const load = async () => {
+    const year = +q("pbYear").value, term = +q("pbTerm").value;
+    q("pbBox").innerHTML = empty("Loading...");
+    const [rel, counts] = await Promise.all([
+      sb.from("result_releases").select("class_id,release_at").eq("year", year).eq("term", term),
+      Promise.all(ref.classes.map(async c => {
+        const r = await sb.from("marks").select("id,students!inner(class_id)", { count: "exact", head: true }).eq("year", year).eq("term", term).eq("students.class_id", c.id);
+        return r.count || 0;
+      }))
+    ]);
+    const relBy = Object.fromEntries((rel.data || []).map(r => [r.class_id, r.release_at]));
+    const now = new Date();
+    q("pbBox").innerHTML = `
+      <div class="quick" style="margin-bottom:1rem">
+        <button class="btn" id="pbAll">Publish all classes</button>
+        <button class="btn ghost" id="pbNone">Unpublish all classes</button>
+      </div>
+      <div class="tablewrap"><table><thead><tr><th>Class</th><th class="num">Marks entered</th><th>Status</th><th></th></tr></thead><tbody>
+      ${ref.classes.map((c, i) => {
+        const at = relBy[c.id] ? new Date(relBy[c.id]) : null;
+        const status = !at ? '<span class="tag">Not published</span>' : at <= now ? `<span class="tag good">Published ${esc(niceDate(relBy[c.id]))}</span>` : `<span class="tag warn">Scheduled ${esc(at.toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }))}</span>`;
+        return `<tr><td>${esc(c.name)}</td><td class="num">${counts[i]}</td><td>${status}</td>
+          <td class="num"><button class="btn sm" data-pub="${c.id}">Publish</button> ${at ? `<button class="btn danger" data-unpub="${c.id}">Unpublish</button>` : ""}</td></tr>`;
+      }).join("")}
+      </tbody></table></div>`;
+  };
+  const publish = async ids => {
+    const year = +q("pbYear").value, term = +q("pbTerm").value;
+    const whenVal = q("pbWhen").value;
+    const when = whenVal ? new Date(whenVal) : new Date();
+    if (isNaN(when)) return toast("Check the release date.", true);
+    const { error } = await sb.from("result_releases").upsert(ids.map(id => ({ class_id: id, year, term, release_at: when.toISOString() })), { onConflict: "class_id,year,term" });
+    if (error) return toast(error.message, true);
+    if (q("pbAnn").checked) {
+      const future = when > new Date();
+      await sb.from("announcements").insert({
+        title: future ? `Term ${term} ${year} results will be released on ${when.toLocaleDateString("en-GB", { day: "numeric", month: "long" })}` : `Term ${term} ${year} results are now available`,
+        body: future ? "You will be able to see the results under Results and Report cards from that day." : "You can now see the results under Results and Report cards.",
+        audience: "all" });
+    }
+    toast(when > new Date() ? "Release scheduled." : `Published for ${ids.length} ${ids.length === 1 ? "class" : "classes"}.`);
+    load();
+  };
+  q("pbYear").onchange = load; q("pbTerm").onchange = load;
+  main.onclick = async e => {
+    const y = +q("pbYear").value, t = +q("pbTerm").value;
+    if (e.target.closest("#pbAll")) return publish(ref.classes.map(c => c.id));
+    if (e.target.closest("#pbNone")) {
+      if (!confirm("Hide this term's results from students and parents in every class?")) return;
+      const { error } = await sb.from("result_releases").delete().eq("year", y).eq("term", t);
+      if (error) return toast(error.message, true);
+      toast("Results hidden again."); return load();
+    }
+    const pub = e.target.closest("[data-pub]"), un = e.target.closest("[data-unpub]");
+    if (pub) return publish([+pub.dataset.pub]);
+    if (un) {
+      const { error } = await sb.from("result_releases").delete().eq("class_id", +un.dataset.unpub).eq("year", y).eq("term", t);
+      if (error) return toast(error.message, true);
+      toast("Results hidden again."); load();
+    }
+  };
+  load();
+}
 
 /* ===================== module registry: add new pages here ===================== */
 const isStaffRole = () => me.role === "admin" || me.role === "teacher";
@@ -2249,6 +2342,7 @@ defineModule("myclasses", "My classes", "users", viewMyClasses);
 defineModule("marks", "Enter marks", "pencil", viewMarks, r => r === "admin" ? "Marks" : "Enter marks");
 defineModule("comments", "Teacher comments", "chat", viewComments);
 defineModule("analytics", "Class analytics", "chart", viewAnalytics);
+defineModule("publish", "Publish results", "upload", viewPublish);
 defineModule("registrations", "Registrations", "shield", viewRegs);
 defineModule("students", "Students", "users", viewStudentsAdmin);
 defineModule("teachers", "Teachers", "user", viewTeachersAdmin);
