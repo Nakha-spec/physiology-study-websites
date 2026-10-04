@@ -601,8 +601,9 @@ function showEmailLogin(title) {
         <button class="btn block" type="submit">Sign In</button>
       </div>
     </form>
-    <div class="auth-foot" style="grid-template-columns:1fr"><button id="home">Back</button></div>`);
+    <div class="auth-foot"><button id="home">Back</button><button id="first">First time here?</button></div>`);
   q("home").onclick = showLanding;
+  q("first").onclick = () => showInviteSignup(title);
   q("eForm").onsubmit = async e => {
     e.preventDefault();
     const { error } = await sb.auth.signInWithPassword({ email: q("eMail").value.trim(), password: q("ePass").value });
@@ -742,14 +743,60 @@ function showPending(reg) {
   q("out").onclick = signOut;
 }
 
+function showInviteSignup(title) {
+  app.innerHTML = authShell(`
+    <div class="auth-head"><h2>Create your account</h2><p>Use the invitation code the school gave you.</p></div>
+    <form id="iForm">
+      <div class="auth-body">
+        <label>Email address<input id="iEmail" type="email" required autocomplete="username"></label>
+        <label>Invitation code<input id="iCode" required autocapitalize="characters" placeholder="XXXX-XXXX-XXXX"></label>
+        <label>Choose a password<input id="iPass" type="password" minlength="8" required autocomplete="new-password"></label>
+        <label>Type the password again<input id="iPass2" type="password" minlength="8" required autocomplete="new-password"></label>
+        <p class="hint">Use the same email address the school invited. At least 8 characters for the password.</p>
+        <p class="err" id="iErr" role="alert"></p>
+      </div>
+      <div class="auth-actions"><button class="btn block" type="submit" id="iBtn">Create account</button></div>
+    </form>
+    <div class="auth-foot" style="grid-template-columns:1fr"><button id="iBack">Back</button></div>`);
+  q("iBack").onclick = () => showEmailLogin(title || "Sign in");
+  let signedUp = false;
+  q("iForm").onsubmit = async e => {
+    e.preventDefault();
+    const err = m => { q("iErr").textContent = m; q("iBtn").disabled = false; };
+    q("iErr").textContent = ""; q("iBtn").disabled = true;
+    if (!signedUp) {
+      if (q("iPass").value !== q("iPass2").value) return err("The two passwords do not match.");
+      const { data, error } = await sb.auth.signUp({ email: q("iEmail").value.trim(), password: q("iPass").value });
+      if (error) return err(/registered/i.test(error.message) ? "This email already has an account. Go back and sign in, or ask the administrator." : error.message);
+      if (!data.session) return err("Your account was created but could not sign in. Ask the administrator to switch off email confirmation.");
+      signedUp = true;
+    }
+    const { error } = await sb.rpc("claim_invite", { p_code: q("iCode").value.trim() });
+    if (error) return err(error.message + " Check the code and email, then try again.");
+    boot();
+  };
+}
+
 function showNoRole(email) {
   app.innerHTML = authShell(`
     <div class="auth-head"><h2>Almost there</h2></div>
-    <div class="auth-body">
-      <p>${esc(email)} is signed in but has no role yet. Ask the school administrator to assign one. Students: sign out, then use Create An Account.</p>
-      <button class="btn block" id="out">Sign out</button>
-    </div>`);
+    <form id="nrForm">
+      <div class="auth-body">
+        <p>${esc(email)} is signed in but has no role yet. If the school gave you an invitation code, enter it below. Otherwise ask the administrator. Students: sign out, then use Create An Account.</p>
+        <label>Invitation code<input id="nrCode" autocapitalize="characters" placeholder="XXXX-XXXX-XXXX"></label>
+        <p class="err" id="nrErr" role="alert"></p>
+        <button class="btn block" type="submit">Use code</button>
+        <button class="btn ghost block" type="button" id="out">Sign out</button>
+      </div>
+    </form>`);
   q("out").onclick = signOut;
+  q("nrForm").onsubmit = async e => {
+    e.preventDefault();
+    if (!q("nrCode").value.trim()) { q("nrErr").textContent = "Type your invitation code."; return; }
+    const { error } = await sb.rpc("claim_invite", { p_code: q("nrCode").value.trim() });
+    if (error) { q("nrErr").textContent = error.message; return; }
+    boot();
+  };
 }
 
 /* ---------- shell: sidebar, top bar, role navigation ---------- */
@@ -1984,6 +2031,59 @@ async function viewClassesAdmin() {
   };
 }
 
+
+/* ---------- invitations: the admin adds people without touching Supabase ---------- */
+const ROLE_NOUN = { teacher: "teacher", parent: "parent", accounts: "accounts office member", admin: "administrator" };
+function invitePanelHtml(fixedRole) {
+  return panel(fixedRole ? `Invite a ${ROLE_NOUN[fixedRole]}` : "Invite someone", `
+    <p>Type their name and email. You get a one-time code to give them. They create their own password, so nothing is needed in Supabase.</p>
+    <form class="row" id="fInvite">
+      <label>Full name<input id="ivName" required></label>
+      <label>Email<input id="ivEmail" type="email" required></label>
+      ${fixedRole ? "" : `<label>Role<select id="ivRole"><option value="teacher">Teacher</option><option value="parent">Parent</option><option value="accounts">Accounts office</option><option value="admin">Administrator</option></select></label>`}
+      ${fixedRole === "parent" || !fixedRole ? `<label>Child's reg number(s), for parents<input id="ivKids" placeholder="e.g. F1-2026-0001, F3-2026-0107"></label>` : ""}
+      <button class="btn" type="submit">Create invitation</button>
+    </form>
+    <div id="ivResult" style="margin-top:1rem"></div>`);
+}
+const invitePendingHtml = () => panel("Waiting to join", `<div id="ivPending">${empty("Loading...")}</div>`);
+
+let invClick = null;
+function wireInvite(fixedRole) {
+  const loadPending = async () => {
+    let qy = sb.from("invitations").select("id,email,full_name,role,code,child_regs,created_at").is("used_at", null).order("created_at", { ascending: false }).limit(100);
+    if (fixedRole) qy = qy.eq("role", fixedRole);
+    const { data, error } = await qy;
+    const box = q("ivPending");
+    if (!box) return;
+    if (error) { box.innerHTML = empty(esc(error.message)); return; }
+    box.innerHTML = (data || []).length ? `<div class="tablewrap" style="margin:0"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Code</th><th></th></tr></thead><tbody>
+      ${data.map(r => `<tr><td>${esc(r.full_name)}</td><td>${esc(r.email)}</td><td>${esc(ROLE_LABEL[r.role] || r.role)}</td><td><code>${esc(r.code)}</code></td><td class="num"><button class="btn danger" data-delinv="${r.id}">Cancel</button></td></tr>`).join("")}
+      </tbody></table></div>` : empty("Nobody is waiting. When someone uses their code, they move to the lists above.");
+  };
+  q("fInvite").onsubmit = async e => {
+    e.preventDefault();
+    const name = q("ivName").value.trim(), email = q("ivEmail").value.trim();
+    const role = fixedRole || q("ivRole").value;
+    const kids = q("ivKids") ? q("ivKids").value.trim() : "";
+    const { data, error } = await sb.rpc("create_invitation", { p_email: email, p_name: name, p_role: role, p_child_regs: kids || null });
+    if (error) return toast(error.message, true);
+    q("ivResult").innerHTML = `<div class="notice"><b>Invitation code: <span style="font-size:1.25rem">${esc(data)}</span></b><br>Give this code to ${esc(name)}. They open the portal, choose the right login button, tap <b>First time here?</b>, and enter ${esc(email)}, the code and a password of their own.</div>`;
+    q("fInvite").reset();
+    loadPending();
+  };
+  if (invClick) main.removeEventListener("click", invClick);
+  invClick = async e => {
+    const b = e.target.closest("[data-delinv]");
+    if (!b || !confirm("Cancel this invitation?")) return;
+    const { error } = await sb.from("invitations").delete().eq("id", +b.dataset.delinv);
+    if (error) return toast(error.message, true);
+    toast("Invitation cancelled."); loadPending();
+  };
+  main.addEventListener("click", invClick);
+  loadPending();
+}
+
 /* ---------- teachers ---------- */
 async function viewTeachersAdmin() {
   await loadRef();
@@ -1992,7 +2092,7 @@ async function viewTeachersAdmin() {
     fetchAll(() => sb.from("teacher_assignments").select("id,teacher_id,class_id,subject_id,classes(name),subjects(name)").order("id"))
   ]);
   const teachers = t.data || [];
-  main.innerHTML = pageHead("Teachers", "Give each teacher their classes and subjects. They can only enter marks and attendance for these.") + `
+  main.innerHTML = pageHead("Teachers", "Invite teachers, then give each one their classes and subjects. They can only enter marks and attendance for these.") + `
     ${panel("Assign a teacher", teachers.length && ref.classes.length && ref.subjects.length ? `
       <form class="row" id="fAssign">
         <label>Teacher<select id="asT">${idOpts(teachers, "full_name")}</select></label>
@@ -2004,24 +2104,14 @@ async function viewTeachersAdmin() {
       const mine = a.filter(x => x.teacher_id === tc.id);
       return `<h4 style="margin-top:1rem">${esc(tc.full_name)}</h4><div class="chips" style="margin-top:.4rem">${mine.length ? mine.map(x => `<span class="chip">${esc((x.classes || {}).name)} &middot; ${esc((x.subjects || {}).name)}<button class="chip-x" data-unas="${x.id}" aria-label="Remove">&times;</button></span>`).join("") : '<span class="hint">Nothing assigned yet</span>'}</div>`;
     }).join("") : empty("No teacher logins yet."))}
-    ${panel("Add a teacher login", `
-      <p>First create the teacher's login in Supabase (Authentication, Users, Add user, tick Auto Confirm User). Then give them a name here.</p>
-      <form class="row" id="fRole">
-        <label>Their login email<input id="rEmail" type="email" required></label>
-        <label>Full name<input id="rName" required></label>
-        <button class="btn" type="submit">Save as teacher</button>
-      </form>`)}`;
+    ${invitePanelHtml("teacher")}
+    ${invitePendingHtml()}`;
+  wireInvite("teacher");
   if (q("fAssign")) q("fAssign").onsubmit = async e => {
     e.preventDefault();
     const { error } = await sb.from("teacher_assignments").insert({ teacher_id: q("asT").value, class_id: +q("asC").value, subject_id: +q("asS").value });
     if (error) return toast(/duplicate/i.test(error.message) ? "That assignment already exists." : error.message, true);
     toast("Assigned."); viewTeachersAdmin();
-  };
-  q("fRole").onsubmit = async e => {
-    e.preventDefault();
-    const { error } = await sb.rpc("set_user_role", { p_email: q("rEmail").value.trim(), p_name: q("rName").value.trim(), p_role: "teacher" });
-    if (error) return toast(error.message, true);
-    toast("Saved."); viewTeachersAdmin();
   };
   main.onclick = async e => {
     const b = e.target.closest("[data-unas]");
@@ -2040,14 +2130,9 @@ async function viewParentsAdmin() {
   ]);
   const parents = p.data || [];
   main.innerHTML = pageHead("Parents", "Parents see only the children linked to them.") + `
-    ${panel("Add a parent login", `
-      <p>First create the parent's login in Supabase (Authentication, Users, Add user, tick Auto Confirm User). Then give them a name here.</p>
-      <form class="row" id="fRole">
-        <label>Their login email<input id="rEmail" type="email" required></label>
-        <label>Full name<input id="rName" required></label>
-        <button class="btn" type="submit">Save as parent</button>
-      </form>`)}
-    ${panel("Link a child to a parent", `
+    ${invitePanelHtml("parent")}
+    ${invitePendingHtml()}
+    ${panel("Link another child to a parent who has joined", `
       <form class="row" id="fLink">
         <label>Child's reg number<input id="lReg" required></label>
         <label>Parent's login email<input id="lEmail" type="email" required></label>
@@ -2057,12 +2142,7 @@ async function viewParentsAdmin() {
       const mine = kidsRows.filter(k => k.parent_id === pr.id);
       return `<h4 style="margin-top:1rem">${esc(pr.full_name)}</h4><div class="chips" style="margin-top:.4rem">${mine.length ? mine.map(k => `<span class="chip">${esc(k.full_name)} (${esc(k.reg_number || "")})<button class="chip-x" data-unlink="${k.id}" aria-label="Unlink ${esc(k.full_name)}">&times;</button></span>`).join("") : '<span class="hint">No child linked yet</span>'}</div>`;
     }).join("") : empty("No parent logins yet."))}`;
-  q("fRole").onsubmit = async e => {
-    e.preventDefault();
-    const { error } = await sb.rpc("set_user_role", { p_email: q("rEmail").value.trim(), p_name: q("rName").value.trim(), p_role: "parent" });
-    if (error) return toast(error.message, true);
-    toast("Saved."); viewParentsAdmin();
-  };
+  wireInvite("parent");
   q("fLink").onsubmit = async e => {
     e.preventDefault();
     try {
@@ -2086,9 +2166,11 @@ async function viewParentsAdmin() {
 async function viewAccounts() {
   const { data } = await sb.from("profiles").select("id,full_name,role").neq("role", "student").order("role").order("full_name").limit(300);
   const list = data || [];
-  main.innerHTML = pageHead("User accounts and roles", "Staff and parent accounts. Students open their own accounts. Give the Accounts office role to the people who record school fees.") + `
-    ${panel("Set a role", `
-      <p>Create the login in Supabase first (Authentication, Users, Add user). Then choose its role here. Changing a role changes what that person can see straight away.</p>
+  main.innerHTML = pageHead("User accounts and roles", "Invite teachers, parents, accounts staff and administrators. Students open their own accounts.") + `
+    ${invitePanelHtml(null)}
+    ${invitePendingHtml()}
+    ${panel("Give a role to an existing login", `
+      <p>For a login that already exists in Supabase. Changing a role changes what that person can see straight away.</p>
       <form class="row" id="fRole">
         <label>Login email<input id="rEmail" type="email" required></label>
         <label>Full name<input id="rName" required></label>
@@ -2097,6 +2179,7 @@ async function viewAccounts() {
       </form>`)}
     ${panel(`Accounts (${list.length})`, list.length ? `<div class="tablewrap" style="margin:0"><table><thead><tr><th>Name</th><th>Role</th></tr></thead><tbody>
       ${list.map(u => `<tr><td>${esc(u.full_name)}</td><td><span class="tag">${esc(ROLE_LABEL[u.role] || u.role)}</span></td></tr>`).join("")}</tbody></table></div>` : empty("No accounts yet."))}`;
+  wireInvite(null);
   q("fRole").onsubmit = async e => {
     e.preventDefault();
     const { error } = await sb.rpc("set_user_role", { p_email: q("rEmail").value.trim(), p_name: q("rName").value.trim(), p_role: q("rRole").value });
