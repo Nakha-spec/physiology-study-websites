@@ -3,288 +3,383 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#172B6B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23172B6B'/%3E%3Cpath d='M4 21 L10 11 L16 21 L22 11 L28 21' fill='none' stroke='%23E9B82E' stroke-width='3'/%3E%3C/svg%3E">
 <title>School Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#F2F5FA; --surface:#FFFFFF; --ink:#142038; --muted:#5E6B85; --rule:#DCE3EF; --tint:#EAF0FA;
-  --primary:#1E429F; --gold:#F4C542; --pen:#D62839; --ok:#1F7A5C; --warn:#B7791F; --focus:#2F6BFF;
-  --side-bg:#16307C; --side:264px;
-  --sans:"Public Sans",system-ui,sans-serif; --serif:"Source Serif 4",Georgia,serif;
+  --navy:#1B2B5B; --royal:#1F4AA8; --gold:#E9B82E; --red:#D4283A;
+  --paper:#F5F6FA; --surface:#FFFFFF; --ink:#14203D; --muted:#586583; --rule:#DDE2EE; --tint:#ECF0FA;
+  --primary:var(--royal); --pen:var(--red); --ok:#1B7A5F; --warn:#A8620F; --focus:#2F6BFF;
+  --side-bg:var(--navy); --side:268px; --tabh:0px;
+  --sans:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --display:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  
+  --serif:"Source Serif 4",Georgia,serif;
+  
 }
-body.dark{--paper:#0E1525;--surface:#17213A;--ink:#E8EDF7;--muted:#9FAAC2;--rule:#27324D;--tint:#202C49;--primary:#3F66D8;--side-bg:#0A1022;--ok:#4CC49A;--warn:#E0A94B;--pen:#FF6B78}
+body.dark{--navy:#1B2F78;--paper:#0E1424;--surface:#161F36;--ink:#E9EEF9;--muted:#9AA7C4;--rule:#26314D;--tint:#202B47;--royal:#4C74E0;--ok:#4CC49A;--warn:#E3AC55;--red:#FF6B78;--side-bg:#0A1022}
 *{box-sizing:border-box}
 html,body{margin:0}
-body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-size:16px;line-height:1.5}
-h1,h2,h3,h4{font-family:var(--serif);margin:0;font-weight:600;line-height:1.2}
-h2{font-size:1.55rem}
-h3{font-size:1.1rem;margin-bottom:.7rem}
-h4{font-size:1rem}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-size:1rem;line-height:1.55;-webkit-text-size-adjust:100%}
+h1,h2,h3,h4{font-family:var(--display);margin:0;font-weight:600;line-height:1.2}
+h2{font-size:1.65rem}
+h3{font-size:1.15rem;margin-bottom:.75rem}
+h4{font-size:1.02rem}
+p{margin:0 0 .6rem}
+a{color:var(--primary)}
 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-
-/* buttons and fields */
-.btn{font:inherit;font-weight:600;background:var(--primary);color:#fff;border:2px solid var(--primary);padding:.55rem 1.1rem;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5rem}
-.btn:hover{filter:brightness(1.1)}
-.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn{font:inherit;font-weight:700;background:var(--primary);color:#fff;border:2px solid var(--primary);min-height:44px;padding:.5rem 1.15rem;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;transition:background .15s,transform .05s}
+.btn:hover{background:#1a3a8e;border-color:#1a3a8e}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
 .btn.ghost{background:transparent;color:var(--primary)}
-body.dark .btn.ghost{color:#9DB8FF;border-color:#4a68c4}
-.btn.ghost:hover{background:var(--tint);filter:none}
-.btn.danger{background:transparent;color:var(--pen);border-color:var(--pen);padding:.25rem .65rem;font-size:.85rem}
-.btn.gold{background:var(--gold);border-color:var(--gold);color:#142038}
+.btn.ghost:hover{background:var(--tint)}
+body.dark .btn.ghost{color:#A9C0FF;border-color:#4c74e0}
+.btn.danger{background:transparent;color:var(--pen);border-color:var(--pen);min-height:34px;padding:.2rem .7rem;font-size:.9rem}
+.btn.danger:hover{background:rgba(212,40,58,.08)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#14203D}
+.btn.gold:hover{background:#d9a822;border-color:#d9a822}
 .btn.red{background:transparent;border-color:var(--pen);color:var(--pen)}
-.btn.big{padding:.9rem 1rem;font-size:1.02rem}
-.btn.block{width:100%;padding:.85rem}
-.btn.sm{padding:.3rem .7rem;font-size:.88rem;border-radius:8px}
+.btn.big{min-height:52px;padding:.7rem 1.1rem;font-size:1.05rem}
+.btn.block{width:100%}
+.btn.sm{min-height:36px;padding:.25rem .8rem;font-size:.92rem;border-radius:8px}
 .link{background:none;border:0;color:var(--primary);text-decoration:underline;font:inherit;cursor:pointer;padding:0}
-body.dark .link{color:#9DB8FF}
-label{display:flex;flex-direction:column;gap:.3rem;font-size:.9rem;font-weight:500;color:var(--muted)}
-input,select,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--rule);border-radius:10px;padding:.55rem .7rem;min-width:0}
-textarea{resize:vertical;min-height:4.5rem}
-input:focus,select:focus,textarea:focus{border-color:var(--primary)}
-input[type=checkbox]{width:1.1rem;height:1.1rem;accent-color:var(--primary)}
-.check{flex-direction:row;align-items:center;gap:.5rem}
-.err{color:var(--pen);font-weight:500;min-height:1.4em;margin:0}
-.hint{font-size:.85rem;color:var(--muted);margin:0}
+body.dark .link{color:#A9C0FF}
+label{display:flex;flex-direction:column;gap:.3rem;font-size:.92rem;font-weight:700;color:var(--muted)}
+input,select,textarea{font:inherit;font-weight:400;color:var(--ink);background:var(--surface);border:1.5px solid #C5CCDD;border-radius:10px;padding:.55rem .75rem;min-height:44px;min-width:0}
+body.dark input,body.dark select,body.dark textarea{border-color:#37446A}
+textarea{resize:vertical;min-height:5rem}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);outline-offset:0}
+input[type=checkbox]{width:1.15rem;height:1.15rem;min-height:0;accent-color:var(--primary)}
+.check{flex-direction:row;align-items:center;gap:.55rem;font-weight:400;color:var(--ink)}
+.err{color:var(--pen);font-weight:700;min-height:1.4em;margin:0}
+.hint{font-size:.9rem;color:var(--muted);margin:0}
 .filters{display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-end;margin-bottom:1.25rem}
 .filters select,.filters input{min-width:9rem}
-.row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end}
+.row{display:flex;flex-wrap:wrap;gap:.8rem;align-items:flex-end}
 .stack{display:grid;gap:1rem}
-.empty{background:var(--surface);border:1px dashed var(--rule);border-radius:12px;padding:1.4rem;color:var(--muted);margin:0}
-
-/* tables and panels */
-.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);border-radius:12px;margin-bottom:1rem}
+.narrow{max-width:640px}
+.quick{display:flex;flex-wrap:wrap;gap:.6rem}
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.65rem;padding:1.8rem 1.2rem;border:1.5px dashed #C5CCDD;border-radius:12px;color:var(--muted);margin:0}
+.empty p{margin:0;max-width:46ch}
+.loading{display:flex;align-items:center;gap:.8rem;padding:1.2rem .4rem;color:var(--muted)}
+.spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--tint);border-top-color:var(--primary);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);border-radius:10px;margin-bottom:1rem}
+.tablewrap.tall{max-height:66vh;overflow:auto}
 table{border-collapse:collapse;width:100%}
-th,td{text-align:left;padding:.6rem .9rem;border-bottom:1px solid var(--rule);vertical-align:middle}
-th{font-size:.85rem;color:var(--muted);font-weight:600;background:var(--tint)}
+th,td{text-align:left;padding:.7rem .95rem;border-bottom:1px solid var(--rule);vertical-align:middle}
+th{font-size:.9rem;color:var(--muted);font-weight:700;background:var(--tint);white-space:nowrap}
+.tall th{position:sticky;top:0;z-index:2}
+tbody tr:hover td{background:rgba(35,71,168,.04)}
 tr:last-child td{border-bottom:0}
 .num{text-align:right}
-input.mark{width:6rem;text-align:right}
+input.mark{width:6.2rem;text-align:right;font-weight:700}
 td.g{font-weight:700;width:5rem}
-td textarea{width:100%;min-width:14rem;min-height:3rem}
-.panel{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:1.2rem;margin-bottom:1.25rem}
-.panel p{color:var(--muted);margin:.2rem 0 1rem;max-width:62ch}
+td textarea{width:100%;min-width:14rem;min-height:3.2rem}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:1.3rem;margin-bottom:1.25rem}
+.panel p{color:var(--muted);margin:.2rem 0 1rem;max-width:64ch}
 .panel > :last-child{margin-bottom:0}
 .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem}
-.chip{background:var(--tint);border-radius:999px;padding:.2rem .75rem;font-size:.9rem;display:inline-flex;align-items:center;gap:.4rem}
-.chip-x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:1.1rem;line-height:1;padding:0}
+.chip{background:var(--tint);border-radius:999px;padding:.25rem .8rem;font-size:.92rem;display:inline-flex;align-items:center;gap:.4rem}
+.chip-x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:1.2rem;line-height:1;padding:0 .1rem}
 .chip-x:hover{color:var(--pen)}
-.tag{display:inline-block;padding:.1rem .65rem;border-radius:999px;font-size:.82rem;font-weight:600;background:var(--tint);color:var(--muted)}
-.tag.present,.tag.good{background:rgba(31,122,92,.15);color:var(--ok)}
-.tag.late,.tag.warn{background:rgba(183,121,31,.18);color:var(--warn)}
-.tag.absent,.tag.bad{background:rgba(214,40,57,.14);color:var(--pen)}
-
-/* page layout */
+.tag{display:inline-block;padding:.12rem .7rem;border-radius:999px;font-size:.85rem;font-weight:700;background:var(--tint);color:var(--muted)}
+.tag.present,.tag.good{background:rgba(27,122,95,.14);color:var(--ok)}
+.tag.late,.tag.warn{background:rgba(168,98,15,.16);color:var(--warn)}
+.tag.absent,.tag.bad{background:rgba(212,40,58,.12);color:var(--pen)}
+.notice{background:rgba(233,184,46,.16);border:1px solid var(--gold);border-radius:10px;padding:.8rem 1rem;margin-bottom:1rem}
+.who-cell{display:flex;align-items:center;gap:.75rem}
 .shell{display:flex;min-height:100vh}
 .mainwrap{flex:1;min-width:0;display:flex;flex-direction:column}
-main{max-width:1100px;margin:0 auto;padding:1.4rem 1.25rem 4rem;width:100%}
-.page-head{margin-bottom:1.25rem}
+main{max-width:1120px;margin:0 auto;padding:1.5rem 1.4rem 1.5rem;width:100%;flex:1}
+main > h2{margin-bottom:1rem}
+.page-head{margin-bottom:1.3rem}
 .page-head h2{margin:0}
-.page-head p{color:var(--muted);margin:.25rem 0 0}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;margin-bottom:1.25rem}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1rem;align-items:start}
+.page-head p{color:var(--muted);margin:.3rem 0 0;max-width:62ch}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:1.25rem;align-items:start}
 .grid2 > .panel{margin-bottom:0}
-.quick{display:flex;flex-wrap:wrap;gap:.6rem}
-
-/* sidebar */
 .side{position:fixed;inset:0 auto 0 0;width:var(--side);background:var(--side-bg);color:#DCE6FF;display:flex;flex-direction:column;z-index:40;transform:translateX(-100%);transition:transform .2s}
 .side.open{transform:none}
-.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:30}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:35}
 .scrim[hidden]{display:none}
-.brand{display:flex;align-items:center;gap:.7rem;padding:1.1rem 1rem;border-bottom:1px solid rgba(255,255,255,.1)}
-.brand img{width:42px;height:42px;object-fit:contain;border-radius:8px;background:#fff;padding:2px}
-.brand-mark{width:42px;height:42px;border-radius:10px;background:var(--gold);color:#142038;display:grid;place-items:center;flex:none}
-.brand-name{font-family:var(--serif);font-weight:600;font-size:1.05rem;color:#fff;line-height:1.2}
-.brand-motto{font-size:.78rem;color:#9DB2E6}
-.nav{flex:1;overflow-y:auto;padding:.5rem .7rem}
-.nav-g{font-size:.8rem;font-weight:600;color:#8FA6DD;margin:1rem .8rem .3rem}
-.nav-i{display:flex;align-items:center;gap:.7rem;width:100%;background:none;border:0;color:#CBD8F7;font:inherit;font-weight:500;padding:.58rem .8rem;border-radius:10px;cursor:pointer;text-align:left}
+.brand{position:relative;display:flex;align-items:center;gap:.75rem;padding:1.15rem 1rem 1.4rem}
+.brand img{width:44px;height:44px;object-fit:contain;border-radius:8px;background:#fff;padding:2px}
+.brand-mark{width:44px;height:44px;border-radius:10px;background:var(--gold);color:#14203D;display:grid;place-items:center;flex:none}
+.brand-name{font-family:var(--display);font-weight:700;font-size:1.08rem;color:#fff;line-height:1.2}
+.brand-motto{font-size:.8rem;color:#A9BBEA}
+.nav{flex:1;overflow-y:auto;padding:.6rem .7rem}
+.nav-g{font-size:.82rem;font-weight:700;color:#93A8DE;margin:1.1rem .8rem .35rem}
+.nav-i{display:flex;align-items:center;gap:.75rem;width:100%;background:none;border:0;color:#D2DCF7;font:inherit;font-weight:700;padding:.65rem .8rem;border-radius:10px;cursor:pointer;text-align:left;min-height:44px}
 .nav-i:hover{background:rgba(255,255,255,.08)}
-.nav-i.on{background:rgba(255,255,255,.14);color:#fff;box-shadow:inset 3px 0 0 var(--gold)}
+.nav-i.on{background:rgba(255,255,255,.14);color:#fff;box-shadow:inset 4px 0 0 var(--gold)}
 .side-foot{padding:.6rem .7rem 1rem;border-top:1px solid rgba(255,255,255,.1)}
-.ic{width:20px;height:20px;flex:none}
-.badge{margin-left:auto;background:var(--gold);color:#142038;font-size:.75rem;font-weight:700;border-radius:999px;padding:.05rem .5rem}
-
-/* top bar */
-.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:.75rem;padding:.7rem 1.1rem;background:var(--surface);border-bottom:1px solid var(--rule)}
+.ic{width:21px;height:21px;flex:none}
+.badge{margin-left:auto;background:var(--gold);color:#14203D;font-size:.78rem;font-weight:700;border-radius:999px;padding:.05rem .55rem}
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:.75rem;padding:.65rem 1.1rem;background:var(--surface);border-bottom:1px solid var(--rule)}
 .spacer{flex:1}
-.iconbtn{width:40px;height:40px;border-radius:10px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.iconbtn{width:44px;height:44px;border-radius:10px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer}
 .iconbtn:hover{background:var(--tint)}
-.chip-term{background:var(--tint);color:var(--primary);font-weight:600;padding:.25rem .75rem;border-radius:999px;font-size:.85rem}
-body.dark .chip-term{color:#9DB8FF}
-.kid-sw select,.kid-chip{font-weight:600;border-radius:999px;padding:.35rem .9rem;border:1.5px solid var(--rule);background:var(--surface)}
-.kid-chip{display:none}
-.user-chip{display:flex;align-items:center;gap:.6rem}
-.avatar{width:38px;height:38px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem}
+.chip-term{background:var(--tint);color:var(--primary);font-weight:700;padding:.3rem .85rem;border-radius:999px;font-size:.9rem}
+body.dark .chip-term{color:#A9C0FF}
+.kid-sw select,.kid-chip{font-weight:700;border-radius:999px;padding:.35rem 1rem;border:1.5px solid var(--rule);background:var(--surface);min-height:40px}
+.kid-chip{display:none;align-items:center}
+.user-chip{display:flex;align-items:center;gap:.65rem}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.92rem}
 .user-meta{display:none;line-height:1.2}
+.user-meta b{display:block}
 .user-meta small{color:var(--muted)}
-@media (min-width:960px){
-  .side{transform:none}
-  .mainwrap{margin-left:var(--side)}
-  .menu-btn{display:none}
-  .user-meta{display:block}
-  .kid-chip{display:inline-block}
-}
-
-/* dashboard cards and charts */
-.stat{display:flex;gap:.9rem;align-items:flex-start;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:1rem 1.1rem}
-.stat.skel{min-height:84px;background:linear-gradient(90deg,var(--tint),var(--surface),var(--tint));background-size:200% 100%;animation:sk 1.4s linear infinite}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:25;display:flex;background:var(--surface);border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:.15rem;padding:.5rem .2rem .45rem;background:none;border:0;color:var(--muted);font:inherit;font-size:.74rem;font-weight:700;cursor:pointer;min-width:0;position:relative}
+.tab span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tab.on{color:var(--primary)}
+body.dark .tab.on{color:#A9C0FF}
+.tab.on::before{content:"";position:absolute;top:0;left:28%;right:28%;height:3px;border-radius:0 0 3px 3px;background:var(--gold)}
+.tab .badge{position:absolute;top:.25rem;left:55%;margin:0}
+@media (max-width:959px){:root{--tabh:64px}}
+@media (min-width:960px){.side{transform:none}
+.mainwrap{margin-left:var(--side)}
+.menu-btn,.tabbar{display:none}
+.user-meta{display:block}
+.kid-chip{display:inline-flex}}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));background:var(--surface);border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin-bottom:1.3rem}
+.stat{display:flex;gap:.95rem;align-items:center;padding:1.15rem 1.25rem;box-shadow:1px 0 0 var(--rule),0 1px 0 var(--rule)}
+.stat.skel{min-height:92px;background:linear-gradient(90deg,var(--tint),var(--surface),var(--tint));background-size:200% 100%;animation:sk 1.4s linear infinite}
 @keyframes sk{to{background-position:-200% 0}}
-.stat-ic{width:42px;height:42px;border-radius:10px;background:var(--tint);color:var(--primary);display:grid;place-items:center;flex:none}
-body.dark .stat-ic{color:#9DB8FF}
-.stat.good .stat-ic{background:rgba(31,122,92,.15);color:var(--ok)}
-.stat.warn .stat-ic{background:rgba(183,121,31,.18);color:var(--warn)}
-.stat.bad .stat-ic{background:rgba(214,40,57,.14);color:var(--pen)}
-.stat-v{font-family:var(--serif);font-size:1.65rem;font-weight:600;line-height:1.1}
-.stat-l{color:var(--muted);font-size:.9rem}
-.stat-s{font-size:.85rem;color:var(--muted)}
-.hbars{display:grid;gap:.1rem}
-.hb{display:grid;grid-template-columns:minmax(70px,34%) 1fr auto;gap:.6rem;align-items:center;margin:.4rem 0;font-size:.92rem}
-.hb-t{height:10px;background:var(--tint);border-radius:999px;overflow:hidden}
+.stat-v{font-family:var(--display);font-size:1.85rem;font-weight:700;line-height:1.05}
+.stat-l{color:var(--muted);font-size:.95rem;font-weight:700}
+.stat-s{font-size:.88rem;color:var(--muted)}
+.stat.good .stat-v{color:var(--ok)}
+.stat.warn .stat-v{color:var(--warn)}
+.stat.bad .stat-v{color:var(--pen)}
+.hbars{display:grid;gap:.15rem}
+.hb{display:grid;grid-template-columns:minmax(80px,34%) 1fr auto;gap:.7rem;align-items:center;margin:.45rem 0;font-size:.97rem}
+.hb-t{height:12px;background:var(--tint);border-radius:999px;overflow:hidden}
 .hb-f{display:block;height:100%;background:var(--primary);border-radius:999px}
-.hb-f.good{background:var(--ok)} .hb-f.warn{background:var(--warn)} .hb-f.bad{background:var(--pen)}
-.hb-v{font-weight:600;font-variant-numeric:tabular-nums}
-.vcols{display:flex;gap:1rem;align-items:stretch;height:190px}
-.vc{flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem}
-.vc-b{flex:1;width:100%;max-width:72px;background:var(--tint);border-radius:8px 8px 0 0;display:flex;align-items:flex-end;overflow:hidden}
+.hb-f.good{background:var(--ok)}
+.hb-f.warn{background:var(--warn)}
+.hb-f.bad{background:var(--pen)}
+.hb-v{font-weight:700;font-variant-numeric:tabular-nums}
+.vcols{display:flex;gap:1rem;align-items:stretch;height:200px}
+.vc{flex:1;display:flex;flex-direction:column;align-items:center;gap:.35rem}
+.vc-b{flex:1;width:100%;max-width:76px;background:var(--tint);border-radius:10px 10px 0 0;display:flex;align-items:flex-end;overflow:hidden}
 .vc-f{display:block;width:100%;background:var(--primary)}
-.vc-f.good{background:var(--ok)} .vc-f.warn{background:var(--warn)} .vc-f.bad{background:var(--pen)}
-.vc-v{font-weight:600;font-size:.9rem}
-.vc-l{font-size:.85rem;color:var(--muted)}
+.vc-f.good{background:var(--ok)}
+.vc-f.warn{background:var(--warn)}
+.vc-f.bad{background:var(--pen)}
+.vc-v{font-weight:700;font-size:.95rem}
+.vc-l{font-size:.88rem;color:var(--muted)}
 .plain{list-style:none;margin:0;padding:0}
-.plain li{padding:.55rem 0;border-bottom:1px solid var(--rule)}
+.plain li{padding:.65rem 0;border-bottom:1px solid var(--rule)}
 .plain li:last-child{border-bottom:0}
-
-/* attendance control */
-.seg{display:inline-flex;border:1.5px solid var(--rule);border-radius:10px;overflow:hidden}
+.seg{display:inline-flex;border:1.5px solid #C5CCDD;border-radius:10px;overflow:hidden}
 .seg label{position:relative;display:block;flex-direction:row}
-.seg input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
-.seg span{display:block;padding:.4rem .8rem;font-weight:600;color:var(--muted);min-width:2.6rem;text-align:center}
+.seg input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;min-height:0}
+.seg span{display:block;padding:.5rem .95rem;font-weight:700;color:var(--muted);min-width:3rem;text-align:center}
 .seg input:checked + span.p{background:var(--ok);color:#fff}
 .seg input:checked + span.l{background:var(--warn);color:#fff}
 .seg input:checked + span.a{background:var(--pen);color:#fff}
 .seg input:focus-visible + span{outline:3px solid var(--focus);outline-offset:-3px}
-
-/* timetable */
-.tt{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.9rem}
-.tt-day h4{margin-bottom:.5rem}
-.slot{background:var(--surface);border:1px solid var(--rule);border-left:4px solid var(--primary);border-radius:10px;padding:.55rem .75rem;margin-bottom:.55rem}
-
-/* announcements */
-.ann{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:1rem 1.2rem;margin-bottom:.9rem}
-.ann.pinned{border-left:5px solid var(--gold)}
-.ann h3{margin-bottom:.2rem}
-.ann .meta{font-size:.85rem;color:var(--muted);margin-bottom:.6rem;display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
-.ann p{margin:0;max-width:75ch}
-.grades-grid{display:grid;grid-template-columns:90px 90px 1fr auto;gap:.5rem;align-items:center;margin-bottom:.5rem}
-
-/* report card */
-.card{background:var(--surface);border:1px solid var(--ink);padding:2rem 2.25rem;max-width:760px;position:relative}
+.savebar{position:sticky;bottom:calc(var(--tabh) + env(safe-area-inset-bottom));z-index:15;display:flex;gap:1rem;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:.75rem 1rem;margin-top:1rem;box-shadow:0 -6px 18px rgba(20,32,61,.08)}
+.tt{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem}
+.tt-day h4{margin-bottom:.55rem}
+.slot{background:var(--surface);border:1px solid var(--rule);border-left:6px solid var(--sc,var(--primary));border-radius:8px;padding:.6rem .8rem;margin-bottom:.6rem}
+.slot b{font-family:var(--display)}
+.ann{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:1.1rem 1.3rem;margin-bottom:.9rem}
+.ann.pinned{border-top:5px solid var(--gold)}
+.ann h3{margin-bottom:.25rem}
+.ann .meta{font-size:.9rem;color:var(--muted);margin-bottom:.6rem;display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.ann p{margin:0;max-width:72ch}
+.grades-grid{display:grid;grid-template-columns:90px 90px 1fr auto;gap:.55rem;align-items:center;margin-bottom:.55rem}
+.card{position:relative;background:var(--surface);border:1px solid var(--ink);padding:2.2rem 2.3rem 2rem;max-width:760px}
 body.dark .card{--surface:#fff;--ink:#14213D;--muted:#5B6781;--rule:#D3DBE8;--tint:#E9EEF7;background:#fff;color:#14213D}
-.card-head{display:flex;justify-content:space-between;gap:1rem;border-bottom:3px double var(--ink);padding-bottom:1rem;margin-bottom:1.25rem}
+.card-head{display:flex;justify-content:space-between;gap:1rem;border-bottom:3px double var(--ink);padding-bottom:1rem;margin:.6rem 0 1.25rem}
 .card-brand{display:flex;gap:.9rem;align-items:center}
-.card-logo{width:54px;height:54px;object-fit:contain}
-.card-head h3{font-size:1.5rem;margin:0}
+.card-logo{width:56px;height:56px;object-fit:contain}
+.card-head h3{font-family:var(--serif);font-size:1.55rem;margin:0}
 .card-head .sub{color:var(--muted);font-size:.95rem}
 .who-line{display:flex;flex-wrap:wrap;gap:.25rem 2.5rem;margin-bottom:1.25rem}
-.who-line div span{display:block;font-size:.8rem;color:var(--muted)}
+.who-line div span{display:block;font-size:.85rem;color:var(--muted)}
 .who-line div b{font-family:var(--serif);font-size:1.25rem;font-weight:600}
 .card table th{background:none;border-bottom:2px solid var(--ink);color:var(--ink)}
+.card tbody tr:hover td{background:none}
 .card td{font-family:var(--serif);font-size:1.05rem}
-.card td.rem{font-family:var(--sans);font-size:.9rem;color:var(--muted)}
+.card td.rem{font-family:var(--sans);font-size:.92rem;color:var(--muted)}
 .sum{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1.5rem;margin-top:1.5rem}
 .sum dl{margin:0;display:grid;grid-template-columns:auto auto;gap:.2rem 1.5rem}
-.sum dt{color:var(--muted);font-size:.9rem}
+.sum dt{color:var(--muted);font-size:.92rem}
 .sum dd{margin:0;font-weight:700;font-family:var(--serif);font-size:1.15rem}
-.stamp{width:104px;height:104px;border:3px solid #D62839;color:#D62839;border-radius:50% 46% 52% 48% / 48% 53% 47% 52%;display:grid;place-content:center;text-align:center;transform:rotate(-7deg);font-family:var(--serif);line-height:1.1}
+.stamp{width:106px;height:106px;border:3px solid #D4283A;color:#D4283A;border-radius:50% 46% 52% 48% / 48% 53% 47% 52%;display:grid;place-content:center;text-align:center;transform:rotate(-7deg);font-family:var(--serif);line-height:1.1}
 .stamp b{font-size:1.9rem}
-.stamp span{font-family:var(--sans);font-size:.75rem;font-weight:600}
+.stamp span{font-family:var(--sans);font-size:.78rem;font-weight:700}
 .comments{margin-top:1.5rem;border-top:1px solid var(--rule);padding-top:.8rem}
-.comments p{font-family:var(--serif);margin:.4rem 0}
+.comments p{font-family:var(--serif);margin:.4rem 0;color:var(--ink)}
 .sign{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem}
-.sign div{border-top:1px solid var(--ink);padding-top:.3rem;font-size:.8rem;color:var(--muted)}
+.sign div{border-top:1px solid var(--ink);padding-top:.3rem;font-size:.85rem;color:var(--muted)}
 .card-actions{margin-top:1rem}
 .batch .card{margin-bottom:1.5rem}
-
-/* toast */
-.toast{position:fixed;left:50%;bottom:1.25rem;transform:translateX(-50%);background:#142038;color:#fff;padding:.7rem 1.1rem;border-radius:10px;font-weight:500;z-index:60;max-width:90vw}
-.toast.bad{background:var(--pen);color:#fff}
-
-/* landing and sign-in */
-.landing{min-height:100vh;background:linear-gradient(160deg,#173a8c,#1f5d98);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;padding:1.5rem;color:#fff}
-.land-card{background:#fff;color:#142038;border-radius:16px;padding:2rem 1.75rem;text-align:center;max-width:420px;width:100%}
-.land-card h1{font-size:1.8rem;margin:1.25rem 0 .4rem}
-.land-sub{margin:0;color:#5E6B85}
-.land-btns{display:grid;gap:.6rem;margin-top:1.5rem}
-.logo{max-height:84px;max-width:100%}
-.logo-name{font-family:var(--serif);font-weight:700;font-size:1.5rem}
-.auth{min-height:100vh;background:var(--paper);display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:2.5rem 1rem}
-.auth-card{width:100%;max-width:440px;background:var(--surface);border:1px solid var(--rule);border-radius:14px;overflow:hidden}
-.auth-head{padding:1.25rem 1.5rem;border-bottom:1px solid var(--rule)}
-.auth-head h2{margin:0 0 .2rem;font-size:1.5rem}
+.toast{position:fixed;left:50%;bottom:calc(var(--tabh) + 1rem);transform:translateX(-50%);background:#14203D;color:#fff;padding:.8rem 1.2rem;border-radius:10px;font-weight:700;z-index:60;max-width:92vw;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:pop .18s ease-out}
+.toast.bad{background:var(--red);color:#fff}
+@keyframes pop{from{transform:translateX(-50%) translateY(8px);opacity:0}}
+.landing{min-height:100vh;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6rem;padding:1.5rem}
+.land-sub{margin:0;color:var(--muted)}
+.land-btns{display:grid;gap:.7rem;margin-top:1.5rem}
+.land-btns .btn{justify-content:flex-start;gap:.8rem;padding-left:1.1rem}
+.land-btns .btn small{display:block;font-weight:400;font-size:.85rem;opacity:.85}
+.land-btns .btn span.txt{text-align:left;line-height:1.2}
+.land-btns .btn.ghost{color:var(--primary)}
+.land-foot{color:#B4C2EE;font-size:.92rem;margin:0}
+.logo{max-height:84px;max-width:100%;margin-top:1rem}
+.logo-name{font-family:var(--display);font-weight:700;font-size:1.5rem;margin-top:1rem}
+.auth{min-height:100vh;background:var(--paper);display:flex;flex-direction:column;align-items:center;gap:1.4rem;padding:2rem 1rem}
+.auth-card{position:relative;width:100%;max-width:450px;background:var(--surface);border:1px solid var(--rule);border-radius:14px;overflow:hidden}
+.auth-head{padding:1.3rem 1.5rem;border-bottom:1px solid var(--rule)}
+.auth-head h2{margin:0 0 .2rem;font-size:1.55rem}
 .auth-head p{margin:0;color:var(--muted)}
 .auth-body{padding:1.5rem;display:grid;gap:1rem}
-.auth-actions{background:var(--tint);border-top:1px solid var(--rule);padding:1.25rem 1.5rem}
+.auth-actions{background:var(--tint);border-top:1px solid var(--rule);padding:1.2rem 1.5rem}
 .auth-foot{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--rule)}
-.auth-foot button{background:none;border:0;font:inherit;font-weight:600;color:var(--primary);padding:1rem;cursor:pointer}
-body.dark .auth-foot button{color:#9DB8FF}
+.auth-foot button{background:none;border:0;font:inherit;font-weight:700;color:var(--primary);padding:1rem;cursor:pointer;min-height:52px}
+body.dark .auth-foot button{color:#A9C0FF}
 .auth-foot button + button{border-left:1px solid var(--rule)}
 .auth-foot button:hover{background:var(--tint)}
-.auth .copy{color:var(--muted);font-size:.9rem;margin:0;text-align:center}
+.auth .copy{color:var(--muted);font-size:.92rem;margin:0;text-align:center}
 .dob{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
-.dob-title{font-size:.9rem;font-weight:500;color:var(--muted);margin:0 0 -.4rem}
+.dob-title{font-size:.92rem;font-weight:700;color:var(--muted);margin:0 0 -.4rem}
 .preview{max-width:100%;max-height:200px;border:1px solid var(--rule);border-radius:8px}
-
-/* registrations and student profile */
 .reg-list{display:grid;gap:1rem}
-.reg-card{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:1.25rem;display:grid;grid-template-columns:240px 1fr;gap:1.25rem}
+.reg-card{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:1.25rem;display:grid;grid-template-columns:240px 1fr;gap:1.25rem}
 .reg-card img{width:100%;border:1px solid var(--rule);border-radius:8px;display:block}
 .reg-card dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem}
-.reg-card dt{color:var(--muted);font-size:.9rem}
+.reg-card dt{color:var(--muted);font-size:.92rem}
 .reg-card dd{margin:0}
 .reg-card h3{margin-bottom:.8rem}
 .actions{display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap}
 .pcard{background:var(--surface);border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin-bottom:1rem}
 .pphoto{display:block;width:100%;max-height:460px;object-fit:contain;background:#0f1522}
-.pbody{padding:1.25rem 1.4rem}
-.preg{font-family:var(--serif);font-size:1.6rem;font-weight:600;line-height:1.2}
+.pbody{padding:1.3rem 1.4rem}
+.preg{font-family:var(--display);font-size:1.6rem;font-weight:700;line-height:1.2}
 .pname{color:var(--muted);margin:.3rem 0 1rem}
-.pbtns{display:grid;gap:.6rem}
-.phead{padding:1rem 1.4rem;border-bottom:1px solid var(--rule);font-weight:600}
+.pbtns{display:grid;gap:.65rem}
+.phead{padding:1rem 1.4rem;border-bottom:1px solid var(--rule);font-weight:700}
 .pbody h4{margin:1rem 0 .2rem}
 .pbody h4:first-child{margin-top:0}
-.pbody p{margin:.2rem 0}
-.crumb{color:var(--muted);margin:0 0 .4rem}
-h1.pg{font-size:1.8rem;margin-bottom:1rem}
+.pbody p{margin:.2rem 0;color:var(--ink)}
+.crumb{color:var(--muted);margin:0 0 .4rem;font-size:.95rem}
+h1.pg{font-size:1.85rem;margin-bottom:1rem}
 .form-card{display:grid;gap:1rem}
-.narrow{max-width:640px}
+@media (max-width:700px){.card{padding:1.4rem 1.2rem}
+.sign{grid-template-columns:1fr}
+.reg-card{grid-template-columns:1fr}
+.grades-grid{grid-template-columns:70px 70px 1fr auto}
+main{padding:1.1rem .9rem 1.2rem}
+.topbar{padding:.55rem .8rem}
+.cards{grid-template-columns:1fr 1fr}
+.stat{padding:.95rem .9rem;gap:.7rem}
+.stat-v{font-size:1.5rem}
+.hb{grid-template-columns:minmax(70px,38%) 1fr auto}}
+@media (max-width:420px){.cards{grid-template-columns:1fr}}
+@media print{body,body.dark{background:#fff;color:#000}
+.side,.topbar,.scrim,.filters,.card-actions,.toast,.page-head,.tabbar,.savebar,.notice{display:none!important}
+.mainwrap{margin:0!important}
+main{padding:0;max-width:none}
+main > h2{display:none!important}
+.card{border:0;padding:1.2rem 0 0;max-width:none}
+.batch .card{break-after:page;page-break-after:always;margin:0}
+.batch .card:last-child{break-after:auto;page-break-after:auto}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}
+.spin{animation:none}}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:flex;gap:.9rem;align-items:center;padding:.8rem 0;border-bottom:1px solid var(--rule)}
+.steps li:last-child{border-bottom:0}
+.step-n{width:32px;height:32px;border-radius:50%;border:2px solid var(--rule);display:grid;place-items:center;font-weight:700;flex:none;color:var(--muted)}
+.steps li.done .step-n{background:var(--ok);border-color:var(--ok);color:#fff}
+.steps li.done .step-t{color:var(--muted);text-decoration:line-through}
+.step-t{flex:1}
+.steps .btn{flex:none}
+[hidden]{display:none!important}
+.dr{color:var(--pen);font-weight:700}
+.cr{color:var(--ok);font-weight:700}
+.site-foot{text-align:center;color:var(--muted);font-size:.92rem;padding:1.2rem 1rem calc(var(--tabh) + 1.4rem)}
+.site-foot b{color:var(--ink);font-family:var(--display)}
+.land-foot b{color:#fff}
+.auth .copy b{color:var(--ink)}
+.rc-grid{display:grid;grid-template-columns:auto 1fr;gap:.55rem 1.8rem;margin:0 0 1.2rem}
+.rc-grid dt{color:var(--muted)}
+.rc-grid dd{margin:0;font-weight:700}
+.rc-amt{font-family:var(--serif);font-size:1.7rem}
+.print-only{display:none}
+details.mn{border-bottom:1px solid var(--rule)}
+details.mn:last-child{border-bottom:0}
+details.mn summary{cursor:pointer;font-weight:700;padding:.85rem .2rem;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:1rem;min-height:48px}
+details.mn summary::-webkit-details-marker{display:none}
+details.mn summary::after{content:"+";font-size:1.5rem;color:var(--primary);line-height:1}
+details.mn[open] summary::after{content:"\2212"}
+.mn-body{padding:0 .2rem 1rem}
+.mn-body p,.mn-body ol{margin:.2rem 0 .6rem;color:var(--ink)}
+.mn-body ol{padding-left:1.3rem}
+.mn-body li{margin:.35rem 0}
+.manual-page{width:100%;max-width:820px}
+@media print{.print-only{display:block!important;margin-bottom:1rem}
+.site-foot{display:none!important}
+body.print-one .page-head,body.print-one .tablewrap,body.print-one .cards,body.print-one .card-actions,body.print-one .site-foot{display:none!important}}
+.badge{background:#fff;color:var(--navy)}
+.nav-i.on{box-shadow:none;background:rgba(255,255,255,.16);color:#fff}
+.tab.on::before{background:var(--primary)}
+.brand{padding:1.1rem 1rem;border-bottom:1px solid rgba(255,255,255,.12)}
+.card{padding:2rem 2.2rem}
+.card-head{margin-top:0}
+.stat{display:block;padding:1.05rem 1.25rem}
+.stat-l{margin-bottom:.15rem}
+.stat-v{font-size:1.7rem;font-weight:700}
+.stat.skel{animation:none;background:var(--tint)}
+.empty{display:block;text-align:left;border:1px solid var(--rule);background:var(--surface);padding:1.1rem 1.3rem}
+.empty p{max-width:none}
+.toast{animation:none}
+.spin{width:20px;height:20px}
+.btn{border-radius:8px}
+.btn.sm{border-radius:6px}
+.panel,.pcard,.ann,.reg-card{border-radius:8px}
+input,select,textarea{border-radius:8px}
+.dash-head{margin-bottom:1.3rem}
+.dash-head h2{margin:0}
+.dash-head p{color:var(--muted);margin:.35rem 0 0}
+.id-strip{display:flex;flex-wrap:wrap;gap:.6rem 2.2rem;margin:1rem 0 0;padding:.85rem 1.1rem;background:var(--surface);border:1px solid var(--rule);border-radius:8px}
+.id-strip dt{font-size:.82rem;color:var(--muted)}
+.id-strip dd{margin:0;font-weight:700}
+.landing{min-height:100vh;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4rem;padding:1.5rem}
+.signin-card{width:100%;max-width:440px;background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:2rem 1.8rem;text-align:left}
+.signin-card h1{font-size:1.6rem;margin:0 0 .35rem}
+.signin-card .logo{margin:0 0 1rem}
+.land-foot{color:var(--muted);font-size:.92rem;margin:0;text-align:center}
+.land-foot b{color:var(--ink)}
+.land-btns{display:grid;gap:.7rem;margin-top:1.4rem}
+.land-btns .btn{justify-content:flex-start;padding:.7rem 1rem;text-align:left}
+.land-btns .btn small{display:block;font-weight:400;font-size:.88rem;opacity:.85}
+.land-btns .btn.ghost small{color:var(--muted)}
 
-@media (max-width:640px){
-  .card{padding:1.25rem}
-  .sign{grid-template-columns:1fr}
-  .reg-card{grid-template-columns:1fr}
-  .grades-grid{grid-template-columns:70px 70px 1fr auto}
-  main{padding:1.1rem .9rem 4rem}
-}
-@media print{
-  body,body.dark{background:#fff;color:#000}
-  .side,.topbar,.scrim,.filters,.card-actions,.toast,.page-head{display:none!important}
-  .mainwrap{margin:0!important}
-  main{padding:0;max-width:none}
-  .card{border:0;padding:0;max-width:none}
-  .batch .card{break-after:page;page-break-after:always;margin:0}
-  .batch .card:last-child{break-after:auto;page-break-after:auto}
-}
-.notice{background:rgba(183,121,31,.15);border:1px solid var(--warn);border-radius:10px;padding:.7rem 1rem;margin-bottom:1rem}
-@media print{.notice{display:none!important}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
-main > h2{margin-bottom:1rem}
-.land-card .btn.ghost{color:#1E429F;border-color:#1E429F}
-.land-card .btn.ghost:hover{background:#EAF0FA}
-@media print{main > h2{display:none!important}}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.45rem 1.8rem;margin:0}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-weight:700}
+tfoot td{font-weight:700;background:var(--tint);border-top:2px solid var(--rule);border-bottom:0}
+.pivot th.num,.pivot td.num{white-space:nowrap}
+
+.pin{background:var(--tint);border:1px solid var(--rule);border-left:4px solid var(--primary);border-radius:8px;margin-bottom:.6rem}
+.pin summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.7rem 1rem;cursor:pointer;font-weight:700;min-height:54px}
+.pin summary::-webkit-details-marker{display:none}
+.pin-title{flex:1}
+.pin[open] .pin-more{display:none}
+.pin:not([open]) .pin-less{display:none}
+.pin-body{padding:0 1rem 1rem}
+.pin-body p{margin:.2rem 0 0;max-width:72ch}
+.notice-img{display:block;max-width:100%;max-height:70vh;margin-top:.9rem;border:1px solid var(--rule);border-radius:8px}
+.notice-file{margin:.9rem 0 0!important}
 </style>
 </head>
 <body>
@@ -326,7 +421,7 @@ const gradeOf = score => { for (const [min, letter, remark] of GRADES) if (score
 const ordinal = n => { const s = ["th","st","nd","rd"], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
 const idOpts = (list, label, sel) => list.map(x => `<option value="${x.id}" ${x.id == sel ? "selected" : ""}>${esc(x[label])}</option>`).join("");
 const termOpts = sel => [1,2,3].map(t => `<option value="${t}" ${t == sel ? "selected" : ""}>Term ${t}</option>`).join("");
-const empty = msg => `<p class="empty">${msg}</p>`;
+const empty = msg => /^(Loading|Building)/.test(msg) ? `<div class="loading"><span class="spin" aria-hidden="true"></span><span>${msg}</span></div>` : `<div class="empty"><p>${msg}</p></div>`;
 const likeSafe = s => s.replace(/[%_\\,()]/g, " ").trim();
 
 let toastTimer;
@@ -404,20 +499,42 @@ const ICONS = {
   plus: '<path d="M12 5v14M5 12h14"/>',
   upload: '<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  inbox: '<path d="M3 13l3-8h12l3 8v6H3z"/><path d="M3 13h5l1 3h6l1-3h5"/>',
   shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>'
 };
 const icon = (n, cls = "") => `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n] || ""}</svg>`;
 
 const pageHead = (title, sub = "") => `<div class="page-head"><h2>${esc(title)}</h2>${sub ? `<p>${sub}</p>` : ""}</div>`;
-const stat = (label, value, sub, ic, tone = "") => `<div class="stat ${tone}"><div class="stat-ic">${icon(ic)}</div><div><div class="stat-v">${value}</div><div class="stat-l">${esc(label)}</div>${sub ? `<div class="stat-s">${sub}</div>` : ""}</div></div>`;
+const stat = (label, value, sub, ic, tone = "", pct = null) => `<div class="stat ${tone}"><div class="stat-l">${esc(label)}</div><div class="stat-v">${value}</div>${sub ? `<div class="stat-s">${sub}</div>` : ""}</div>`;
+const greeting = () => { const h = new Date().getHours(); return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening"; };
+/* page header at the top of every dashboard */
+const coverHtml = ({ title, sub = "", rows = [], actions = "" }) => `<section class="dash-head">
+  <h2>${esc(title)}</h2>${sub ? `<p>${sub}</p>` : ""}
+  ${rows.length ? `<dl class="id-strip">${rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
+  ${actions ? `<div class="quick">${actions}</div>` : ""}</section>`;
+const familyCover = (k, parent) => coverHtml({
+  title: `${greeting()}, ${first(parent ? me.full_name : k.full_name)}`,
+  sub: parent ? `Here is how ${esc(first(k.full_name))} is doing this term.` : "Here is your term at a glance.",
+  rows: [["Name", k.full_name], ["Class", clsName(k.class_id)], ["Reg no.", k.reg_number || "-"]] });
+const staffCover = (roleLabel, sub, actions = "") => coverHtml({ title: `${greeting()}, ${first(me.full_name)}`, sub, actions,
+  rows: [["Name", me.full_name], ["Role", roleLabel], ["Year", `${SETTINGS.current_year}, Term ${SETTINGS.current_term}`]] });
 const panel = (title, inner) => `<section class="panel">${title ? `<h3>${esc(title)}</h3>` : ""}${inner}</section>`;
 const hbars = rows => `<div class="hbars">${rows.map(r => `<div class="hb"><span>${esc(r.label)}</span><span class="hb-t"><span class="hb-f ${r.tone || ""}" style="width:${Math.max(0, Math.min(100, r.pct))}%"></span></span><span class="hb-v">${esc(r.text)}</span></div>`).join("")}</div>`;
 const vcols = rows => `<div class="vcols">${rows.map(r => `<div class="vc"><span class="vc-v">${esc(r.text)}</span><span class="vc-b"><span class="vc-f ${r.tone || ""}" style="height:${Math.max(0, Math.min(100, r.pct))}%"></span></span><span class="vc-l">${esc(r.label)}</span></div>`).join("")}</div>`;
-const slotHtml = (s, extra) => `<div class="slot"><b>${fmtTime(s.start_time)}&ndash;${fmtTime(s.end_time)}</b><div>${esc((s.subjects || {}).name || "Free period")}</div><div class="hint">${esc([extra, (s.profiles || {}).full_name, s.room].filter(Boolean).join(" · "))}</div></div>`;
-const annCard = (a, admin) => `<article class="ann ${a.pinned ? "pinned" : ""}">
-  <h3>${esc(a.title)}</h3>
-  <div class="meta"><span>${esc(niceDate(a.created_at))}</span>${a.pinned ? '<span class="tag warn">Pinned</span>' : ""}${admin ? `<span class="tag">${esc(a.audience)}</span><button class="btn danger" data-delann="${a.id}">Delete</button>` : ""}</div>
-  <p>${esc(a.body).replace(/\n/g, "<br>")}</p></article>`;
+const slotHtml = (s, extra) => `<div class="slot"><b>${fmtTime(s.start_time)}&ndash;${fmtTime(s.end_time)}</b><div>${esc((s.subjects || {}).name || "Free period")}</div><div class="hint">${esc([extra, (s.profiles || {}).full_name, s.room].filter(Boolean).join(", "))}</div></div>`;
+const attachHtml = (a, url) => {
+  if (!a.attachment_path || !url) return "";
+  const label = esc(a.attachment_name || "Attachment");
+  return /^image\//.test(a.attachment_type || "")
+    ? `<a href="${esc(url)}" target="_blank" rel="noopener"><img class="notice-img" src="${esc(url)}" alt="${label}"></a>`
+    : `<p class="notice-file"><a class="btn ghost sm" href="${esc(url)}" target="_blank" rel="noopener">Open ${label}</a></p>`;
+};
+const noticeMeta = (a, admin) => `<div class="meta"><span>${esc(niceDate(a.created_at))}</span>${admin ? `<span class="tag">${esc(a.audience)}</span>${a.pinned ? '<span class="tag warn">Pinned</span>' : ""}<span class="tag">${a.expires_at ? "Ends " + esc(niceDate(a.expires_at)) : "No end date"}</span><button class="btn ghost sm" data-extend="${a.id}">Extend 30 days</button><button class="btn danger" data-delann="${a.id}">Delete</button>` : ""}</div>`;
+const annCard = (a, admin, url) => `<article class="ann">
+  <h3>${esc(a.title)}</h3>${noticeMeta(a, admin)}
+  <p>${esc(a.body).replace(/\n/g, "<br>")}</p>${attachHtml(a, url)}</article>`;
+const pinRow = (a, admin, url) => `<details class="pin"><summary><span class="pin-title">${esc(a.title)}</span><span class="btn sm pin-more">Learn more</span><span class="btn ghost sm pin-less">Hide</span></summary>
+  <div class="pin-body">${noticeMeta(a, admin)}<p>${esc(a.body).replace(/\n/g, "<br>")}</p>${attachHtml(a, url)}</div></details>`;
 
 /* find a student by registration number (staff) */
 async function findStudentByReg(reg) {
@@ -492,9 +609,22 @@ async function feeStatement(id) {
   return error ? null : data;
 }
 async function annList(n) {
-  const { data, error } = await sb.from("announcements").select("*").order("pinned", { ascending: false }).order("created_at", { ascending: false }).limit(n);
-  return error ? [] : (data || []);
+  const base = () => sb.from("announcements").select("*").order("pinned", { ascending: false }).order("created_at", { ascending: false }).limit(n);
+  let r = await base().or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`);
+  if (r.error) r = await base();
+  return r.error ? [] : (r.data || []);
 }
+/* notices past their end date are hidden by the database at once; this removes them and their files */
+async function purgeExpiredNotices() {
+  if (!me || me.role !== "admin") return;
+  const { data, error } = await sb.from("announcements").select("id,attachment_path").lt("expires_at", new Date().toISOString()).limit(100);
+  if (error || !data || !data.length) return;
+  const paths = data.filter(a => a.attachment_path).map(a => a.attachment_path);
+  if (paths.length) await sb.storage.from("notices").remove(paths);
+  await sb.from("announcements").delete().in("id", data.map(a => a.id));
+}
+const endOfDay = d => { d.setHours(23, 59, 59, 0); return d; };
+const inDays = n => { const d = new Date(); d.setDate(d.getDate() + n); return endOfDay(d).toISOString(); };
 async function slotsFor(filter, day) {
   let qy = sb.from("timetable_slots").select("id,day,start_time,end_time,room,class_id,teacher_id,subjects(name),profiles(full_name)").order("start_time");
   if (filter.class_id) qy = qy.eq("class_id", filter.class_id);
@@ -532,28 +662,31 @@ async function signOut() { await sb.auth.signOut(); me = null; document.body.cla
 
 const authEmail = reg => `${LOGIN_LOCAL}+${reg.toLowerCase().replace(/[^a-z0-9]/g, "")}@${LOGIN_DOMAIN}`;
 const logoHtml = () => { const u = SETTINGS.logo_url || SCHOOL_LOGO; return u ? `<img class="logo" src="${esc(u)}" alt="${esc(SCHOOL_NAME)}">` : `<div class="logo-name">${esc(SCHOOL_NAME)}</div>`; };
-const authShell = inner => `<div class="auth">${logoHtml()}<div class="auth-card">${inner}</div><p class="copy">${esc(SCHOOL_NAME)} &copy; ${thisYear}</p></div>`;
+const authShell = inner => `<div class="auth">${logoHtml()}<div class="auth-card">${inner}</div><p class="copy">${esc(SCHOOL_NAME)} &copy; ${thisYear}<br><b>Crucial Tech</b></p></div>`;
 
 /* ---------- landing ---------- */
 function showLanding() {
   applyTheme();
+  const logo = SETTINGS.logo_url || SCHOOL_LOGO;
   app.innerHTML = `
   <div class="landing">
-    <div class="land-card">
-      ${logoHtml()}
-      <h1>Welcome to ${esc(SCHOOL_NAME)}</h1>
-      <p class="land-sub">${esc(SETTINGS.motto || "Learning, results and school news in one place")}</p>
+    <div class="signin-card">
+      ${logo ? `<img class="logo" src="${esc(logo)}" alt="">` : ""}
+      <h1>${esc(SCHOOL_NAME)}</h1>
+      <p class="land-sub">${esc(SETTINGS.motto || "Sign in to see marks, registers, fees and school news.")}</p>
       <div class="land-btns">
-        <button class="btn big" id="lStudent">Login as Student</button>
-        <button class="btn big ghost" id="lParent">Login as Parent</button>
-        <button class="btn big gold" id="lStaff">Login as Teacher or Administrator</button>
+        <button class="btn big" id="lStudent"><span class="txt">Student<small>Sign in with your registration number</small></span></button>
+        <button class="btn big ghost" id="lParent"><span class="txt">Parent or guardian<small>See how your child is doing</small></span></button>
+        <button class="btn big ghost" id="lStaff"><span class="txt">Teacher or staff<small>Marks, registers, fees and settings</small></span></button>
       </div>
+      <p style="margin:1.2rem 0 0"><button class="link" id="lManual">Read the user manual</button></p>
     </div>
-    <div>${esc(SCHOOL_NAME)} &copy; ${thisYear}</div>
+    <p class="land-foot">${esc(SCHOOL_NAME)} &copy; ${thisYear}<br><b>Crucial Tech</b></p>
   </div>`;
   q("lStudent").onclick = showStudentLogin;
   q("lParent").onclick = () => showEmailLogin("Parent sign in");
-  q("lStaff").onclick = () => showEmailLogin("Teacher or administrator sign in");
+  q("lStaff").onclick = () => showEmailLogin("Teacher or staff sign in");
+  q("lManual").onclick = showManualPublic;
 }
 
 /* ---------- student sign in ---------- */
@@ -808,12 +941,12 @@ const NAV = {
     { g: "", items: ["dashboard", "profile"] },
     { g: "Learning", items: ["subjects", "timetable", "attendance"] },
     { g: "Results", items: ["results", "reportcards"] },
-    { g: "School", items: ["fees", "announcements"] }
+    { g: "School", items: ["fees", "receipts", "announcements"] }
   ],
   parent: [
     { g: "", items: ["dashboard", "children"] },
     { g: "My child", items: ["results", "reportcards", "attendance", "subjects", "timetable"] },
-    { g: "School", items: ["fees", "announcements"] }
+    { g: "School", items: ["fees", "receipts", "announcements"] }
   ],
   teacher: [
     { g: "", items: ["dashboard", "myclasses"] },
@@ -823,16 +956,18 @@ const NAV = {
   ],
   accounts: [
     { g: "", items: ["dashboard"] },
-    { g: "Fees", items: ["fees", "balances"] },
+    { g: "Fees", items: ["balances", "fees"] },
     { g: "School", items: ["announcements"] }
   ],
   admin: [
     { g: "", items: ["dashboard"] },
     { g: "People", items: ["students", "teachers", "parents", "registrations", "accounts"] },
-    { g: "Academics", items: ["classes", "timetable", "attendance", "comments", "analytics", "publish", "reportcards"] },
-    { g: "School", items: ["fees", "announcements", "settings"] }
+    { g: "Academics", items: ["classes", "timetable", "attendance", "analytics", "publish", "reportcards"] },
+    { g: "School", items: ["fees", "balances", "announcements", "settings"] }
   ]
 };
+const TAB_SET = { student: ["dashboard", "results", "attendance", "fees"], parent: ["dashboard", "results", "attendance", "fees"], teacher: ["dashboard", "marks", "attendance", "analytics"], admin: ["dashboard", "students", "publish", "announcements"], accounts: ["dashboard", "balances", "fees", "announcements"] };
+const TAB_NAME = { dashboard: "Home", results: "Results", attendance: "Register", fees: "Fees", marks: "Marks", analytics: "Analytics", students: "Students", publish: "Publish", announcements: "Notices", balances: "Payments" };
 const ROLE_LABEL = { admin: "Administrator", teacher: "Teacher", student: "Student", parent: "Parent", accounts: "Accounts office" };
 
 const applyTheme = () => document.body.classList.toggle("dark", lsGet("theme") === "dark");
@@ -864,36 +999,52 @@ async function showApp() {
   app.innerHTML = `
   <div class="shell">
     <aside class="side" id="side">
-      <div class="brand">${SETTINGS.logo_url ? `<img src="${esc(SETTINGS.logo_url)}" alt="">` : `<span class="brand-mark">${icon("school")}</span>`}
+      <div class="brand">${SETTINGS.logo_url ? `<img src="${esc(SETTINGS.logo_url)}" alt="">` : `<span class="brand-mark">${esc(initials(SCHOOL_NAME))}</span>`}
         <div><div class="brand-name">${esc(SCHOOL_NAME)}</div>${SETTINGS.motto ? `<div class="brand-motto">${esc(SETTINGS.motto)}</div>` : ""}</div></div>
       <div class="nav">${groups.map(g => `${g.g ? `<div class="nav-g">${esc(g.g)}</div>` : ""}${g.items.map(navBtn).join("")}`).join("")}</div>
       <div class="side-foot">
-        <button class="nav-i" data-m="password">${icon("key")}<span>Change password</span></button>
-        <button class="nav-i" id="logoutBtn">${icon("logout")}<span>Sign out</span></button>
+        <button class="nav-i" data-m="manual"><span>User manual</span></button>
+        <button class="nav-i" data-m="password"><span>Change password</span></button>
+        <button class="nav-i" id="logoutBtn"><span>Sign out</span></button>
       </div>
     </aside>
     <div class="scrim" id="scrim" hidden></div>
     <div class="mainwrap">
       <header class="topbar">
-        <button class="iconbtn menu-btn" id="menuBtn" aria-label="Open menu">${icon("menu")}</button>
-        <span class="chip-term">Term ${SETTINGS.current_term} &middot; ${SETTINGS.current_year}</span>
+        <button class="iconbtn menu-btn" id="menuBtn" aria-label="Open menu"></button>
+        <span class="chip-term">Term ${SETTINGS.current_term}, ${SETTINGS.current_year}</span>
         <span class="spacer"></span>
         ${kidSwitch}
-        <button class="iconbtn" id="themeBtn" aria-label="Switch between light and dark mode">${icon("moon")}</button>
+        <button class="iconbtn" id="themeBtn" aria-label="Switch between light and dark mode"></button>
         <span class="user-chip"><span class="avatar">${esc(initials(me.full_name))}</span>
           <span class="user-meta"><b>${esc(me.full_name)}</b><small>${ROLE_LABEL[me.role]}</small></span></span>
       </header>
       <main id="main"></main>
+      ${crucialFoot}
+    </div>
+    <div class="tabbar" role="navigation" aria-label="Main">
+      ${(TAB_SET[me.role] || []).map(id => `<button class="tab" data-m="${id}">${icon(MODULES[id].icon)}<span>${esc(TAB_NAME[id] || MODULES[id].title)}</span></button>`).join("")}
+      <button class="tab" id="tabMore"><span>Menu</span></button>
     </div>
   </div>`;
   main = q("main");
-  document.querySelectorAll(".nav-i[data-m]").forEach(b => b.onclick = () => go(b.dataset.m));
+  document.querySelectorAll(".nav-i[data-m], .tab[data-m]").forEach(b => b.onclick = () => go(b.dataset.m));
+  q("tabMore").onclick = () => { q("side").classList.add("open"); q("scrim").hidden = false; };
   q("logoutBtn").onclick = signOut;
   q("menuBtn").onclick = () => { q("side").classList.add("open"); q("scrim").hidden = false; };
   q("scrim").onclick = closeSide;
   q("themeBtn").onclick = () => { lsSet("theme", document.body.classList.contains("dark") ? "light" : "dark"); applyTheme(); };
   if (q("kidSel")) q("kidSel").onchange = e => { activeKid = +e.target.value; lsSet("activeKid:" + me.id, String(activeKid)); go(curModule || "dashboard"); };
   main.addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) go(b.dataset.go); });
+  main.addEventListener("keydown", e => {
+    const t = e.target;
+    if (e.key !== "Enter" || !t.matches || !t.matches("input.mark, input.pay")) return;
+    e.preventDefault();
+    const all = [...main.querySelectorAll(t.classList.contains("mark") ? "input.mark" : "input.pay")].filter(i => { const tr = i.closest("tr"); return !tr || !tr.hidden; });
+    const nxt = all[all.indexOf(t) + 1];
+    if (nxt) { nxt.focus(); nxt.select(); }
+  });
+  if (me.role === "admin") purgeExpiredNotices().catch(() => {});
   return go("dashboard");
 }
 
@@ -901,7 +1052,7 @@ function go(id) {
   const m = MODULES[id];
   if (!m || !main) return Promise.resolve();
   curModule = id;
-  document.querySelectorAll(".nav-i[data-m]").forEach(b => b.classList.toggle("on", b.dataset.m === id));
+  document.querySelectorAll(".nav-i[data-m], .tab[data-m]").forEach(b => b.classList.toggle("on", b.dataset.m === id));
   closeSide();
   main.onclick = null;
   window.scrollTo(0, 0);
@@ -1039,7 +1190,7 @@ function viewMarks() {
     <label>Term<select id="mTerm">${termOpts(SETTINGS.current_term)}</select></label>
     <label>Year<input id="mYear" type="number" value="${thisYear}" min="2000" max="2100"></label>
   </div>
-  <div id="mTable"><p class="empty">Loading...</p></div>`;
+  <div id="mTable">${empty("Loading...")}</div>`;
   const fillSubjects = () => { q("mSubject").innerHTML = idOpts(scopeSubjects(+q("mClass").value), "name"); };
   fillSubjects();
 
@@ -1062,14 +1213,14 @@ function viewMarks() {
       : `<p class="hint" style="margin-bottom:1rem">These marks are private. Students and parents see them only after the administrator publishes the term's results.</p>`;
     box.innerHTML = relLine + `
     <div class="filters"><label>Find a student<input id="mSearch" placeholder="Name or reg number"></label><span class="hint">${studs.length} students</span></div>
-    <div class="tablewrap"><table>
+    <div class="tablewrap tall"><table>
       <thead><tr><th>Student</th><th>Reg number</th><th class="num">Mark out of 100</th><th>Grade</th></tr></thead>
       <tbody>${studs.map(s => `
         <tr data-find="${esc((s.full_name + " " + (s.reg_number || "")).toLowerCase())}"><td>${esc(s.full_name)}</td><td>${esc(s.reg_number || "")}</td>
         <td class="num"><input class="mark" type="number" min="0" max="100" step="0.5" data-sid="${s.id}" value="${byId[s.id] ?? ""}" aria-label="Mark for ${esc(s.full_name)}"></td>
         <td class="g">${byId[s.id] != null ? gradeOf(byId[s.id]).letter : ""}</td></tr>`).join("")}
       </tbody></table></div>
-    <button class="btn" id="saveMarks">Save marks</button>`;
+    <div class="savebar"><span class="hint">Press Enter to move to the next student. Nothing is saved until you press Save.</span><button class="btn" id="saveMarks">Save marks</button></div>`;
     q("mSearch").oninput = e => {
       const t = e.target.value.trim().toLowerCase();
       box.querySelectorAll("tbody tr").forEach(tr => tr.hidden = t && !tr.dataset.find.includes(t));
@@ -1124,7 +1275,7 @@ async function viewComments() {
     <label>Term<select id="kTerm">${termOpts(SETTINGS.current_term)}</select></label>
     <label>Year<input id="kYear" type="number" value="${thisYear}" min="2000" max="2100"></label>
   </div>
-  <div id="kBox"><p class="empty">Loading...</p></div>`;
+  <div id="kBox">${empty("Loading...")}</div>`;
 
   const load = async () => {
     const classId = +q("kClass").value, term = +q("kTerm").value, year = +q("kYear").value;
@@ -1148,7 +1299,7 @@ async function viewComments() {
       <button class="btn ghost" id="kSuggest">Suggest comments from marks</button>
       <span class="hint">Suggestions only fill empty boxes. You can edit them before saving.</span>
     </div>
-    <div class="tablewrap"><table>
+    <div class="tablewrap tall"><table>
       <thead><tr><th>Student</th><th class="num">Average</th><th>Class teacher's comment</th>${isAdmin ? "<th>Head's comment</th>" : ""}</tr></thead>
       <tbody>${studs.map(st => {
         const x = sums[st.id], avg = x ? x.t / x.n : null, c = cm[st.id] || {};
@@ -1159,7 +1310,7 @@ async function viewComments() {
           ${isAdmin ? `<td><textarea data-k="h" data-orig="${esc(c.head_comment || "")}" aria-label="Head comment for ${esc(st.full_name)}">${esc(c.head_comment || "")}</textarea></td>` : ""}
         </tr>`; }).join("")}
       </tbody></table></div>
-    <button class="btn" id="kSave">Save comments</button>`;
+    <div class="savebar"><span class="hint">Comments print on the report card.</span><button class="btn" id="kSave">Save comments</button></div>`;
 
     q("kSearch").oninput = e => {
       const t = e.target.value.trim().toLowerCase();
@@ -1262,7 +1413,7 @@ function cardHtml(d) {
   return `
   <article class="card">
     <div class="card-head">
-      <div class="card-brand">${SETTINGS.logo_url ? `<img class="card-logo" src="${esc(SETTINGS.logo_url)}" alt="">` : ""}<div><h3>${esc(SCHOOL_NAME)}</h3><div class="sub">Student report${SETTINGS.motto ? " &middot; " + esc(SETTINGS.motto) : ""}</div></div></div>
+      <div class="card-brand">${SETTINGS.logo_url ? `<img class="card-logo" src="${esc(SETTINGS.logo_url)}" alt="">` : ""}<div><h3>${esc(SCHOOL_NAME)}</h3><div class="sub">Student report${SETTINGS.motto ? ", " + esc(SETTINGS.motto) : ""}</div></div></div>
       <div class="sub" style="text-align:right">Term ${d.term}<br>${d.year}</div>
     </div>
     <div class="who-line">
@@ -1308,7 +1459,7 @@ async function resetAccount(studentId) {
 }
 
 async function viewRegs() {
-  main.innerHTML = `<h2>Registrations</h2><p class="empty">Loading...</p>`;
+  main.innerHTML = `<h2>Registrations</h2>${empty("Loading...")}`;
   const { data, error } = await sb.from("student_details")
     .select("student_id,dob,address,email,photo_path,submitted_at,students(full_name,reg_number,class_id)")
     .order("submitted_at", { ascending: false }).limit(50);
@@ -1446,7 +1597,7 @@ async function addDemoExtras(classId, subs, studs) {
       const ds = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
       studs.forEach(st => { const r = Math.random(); rows.push({ student_id: st.id, att_date: ds, status: r < 0.86 ? "present" : r < 0.94 ? "late" : "absent" }); });
     }
-    await sb.from("attendance").upsert(rows, { onConflict: "student_id,att_date" });
+    await sb.rpc("demo_insert_attendance", { p_rows: rows });
     const times = [["07:30", "08:10"], ["08:10", "08:50"], ["09:10", "09:50"], ["09:50", "10:30"]], slots = [];
     for (let day = 1; day <= 5; day++) times.forEach((t, i) => slots.push({ class_id: classId, day, start_time: t[0], end_time: t[1], subject_id: subs[(day + i * 2) % subs.length].id, room: "Room " + (i + 1) }));
     await sb.from("timetable_slots").insert(slots);
@@ -1461,8 +1612,7 @@ async function addDemoExtras(classId, subs, studs) {
 async function dashFamily() {
   if (!needKid()) return;
   const k = kid(), parent = me.role === "parent";
-  main.innerHTML = pageHead(parent ? `Good day, ${first(me.full_name)}` : `Welcome, ${first(k.full_name)}`,
-      `${esc(k.full_name)} &middot; ${esc(clsName(k.class_id))} &middot; ${esc(k.reg_number || "")}`) +
+  main.innerHTML = familyCover(k, parent) +
     `<div class="cards">${[1, 2, 3, 4].map(() => `<div class="stat skel"></div>`).join("")}</div>`;
   const [rep, att, fee, anns, slots] = await Promise.all([
     latestReport(k.id), attSummary(k.id), feeStatement(k.id), annList(3), slotsFor({ class_id: k.class_id }, todayDow())]);
@@ -1472,10 +1622,10 @@ async function dashFamily() {
   const hasAtt = att && att.total > 0;
   const cards = [
     stat("Latest average", avg == null ? "-" : avg.toFixed(1) + "%",
-      rep ? `Term ${rep.term}${rep.position ? " &middot; " + ordinal(rep.position) + " of " + rep.class_size : ""}` : (me.role === "student" && SETTINGS.students_see_results === false ? "Shown to parents only" : heldFees ? "Held until fees are paid" : "No published results yet"), "chart", avg == null ? (heldFees ? "warn" : "") : toneClass(avg)),
-    stat("Attendance this year", hasAtt ? att.rate + "%" : "-", hasAtt ? `${att.absent} absent, ${att.late} late` : "No register yet", "check", hasAtt ? toneClass(att.rate) : ""),
-    stat("Fees balance", bal == null ? "-" : money(bal), bal == null ? "Not set up yet" : bal > 0 ? "Outstanding" : "Paid up", "wallet", bal == null ? "" : bal > 0 ? "warn" : "good"),
-    stat("New announcements", String(unread), unread ? "Open Announcements to read" : "You are up to date", "megaphone")
+      rep ? `Term ${rep.term}${rep.position ? ", " + ordinal(rep.position) + " of " + rep.class_size : ""}` : (me.role === "student" && SETTINGS.students_see_results === false ? "Shown to parents only" : heldFees ? "Held until fees are paid" : "No published results yet"), "chart", avg == null ? (heldFees ? "warn" : "") : toneClass(avg), avg == null ? null : avg),
+    stat("Attendance this year", hasAtt ? att.rate + "%" : "-", hasAtt ? `${att.absent} absent, ${att.late} late` : "No register yet", "check", hasAtt ? toneClass(att.rate) : "", hasAtt ? att.rate : null),
+    stat("Fees balance", bal == null ? "-" : (bal < 0 ? money(-bal) + " credit" : money(bal)), bal == null ? "Not set up yet" : bal > 0 ? "Outstanding" : "Paid up", "wallet", bal == null ? "" : bal > 0 ? "warn" : "good"),
+    stat("New notices", String(unread), unread ? "Open Notices to read" : "You are up to date", "megaphone")
   ].join("");
   const resultsPanel = panel("Latest results", rep
     ? hbars(rep.marks.slice().sort((a, b) => b.score - a.score).map(m => ({ label: m.subject, pct: Number(m.score), text: `${Number(m.score)} ${gradeOf(Number(m.score)).letter}`, tone: toneClass(Number(m.score)) })))
@@ -1485,11 +1635,10 @@ async function dashFamily() {
   const todayPanel = panel("Today's lessons", todayDow()
     ? (slots.length ? slots.map(s => slotHtml(s)).join("") : empty("No timetable has been set for today."))
     : empty("No lessons on weekends."));
-  const annPanel = panel("Latest announcements", anns.length
+  const annPanel = panel("Latest notices", anns.length
     ? `<ul class="plain">${anns.map(a => `<li><b>${esc(a.title)}</b><div class="hint">${esc(niceDate(a.created_at))}</div></li>`).join("")}</ul><div class="quick" style="margin-top:.8rem"><button class="btn ghost sm" data-go="announcements">See all</button></div>`
-    : empty("No announcements yet."));
-  main.innerHTML = pageHead(parent ? `Good day, ${first(me.full_name)}` : `Welcome, ${first(k.full_name)}`,
-      `${esc(k.full_name)} &middot; ${esc(clsName(k.class_id))} &middot; ${esc(k.reg_number || "")}`) +
+    : empty("No notices yet."));
+  main.innerHTML = familyCover(k, parent) +
     `<div class="cards">${cards}</div><div class="grid2">${resultsPanel}<div>${todayPanel}${annPanel}</div></div>`;
 }
 
@@ -1507,11 +1656,11 @@ async function viewChildren() {
       const bal = fee ? fee.terms.reduce((a, t) => a + Number(t.charged) - Number(t.paid), 0) : null;
       return `<section class="panel">
         <h3>${esc(k.full_name)}</h3>
-        <p>${esc(clsName(k.class_id))} &middot; ${esc(k.reg_number || "")}</p>
+        <p>${esc(clsName(k.class_id))}, ${esc(k.reg_number || "")}</p>
         <ul class="plain">
           <li>Latest average: <b>${avg == null ? "-" : avg.toFixed(1) + "%"}</b>${rep && rep.position ? ` (${ordinal(rep.position)} of ${rep.class_size})` : ""}</li>
           <li>Attendance this year: <b>${att && att.total ? att.rate + "%" : "-"}</b></li>
-          <li>Fees balance: <b>${bal == null ? "-" : money(bal)}</b></li>
+          <li>Fees balance: <b>${bal == null ? "-" : (bal < 0 ? money(-bal) + " credit" : money(bal))}</b></li>
         </ul>
         <div class="quick" style="margin-top:1rem"><button class="btn sm" data-pick="${k.id}">Open dashboard</button></div>
       </section>`; }).join("")}</div>`;
@@ -1534,7 +1683,7 @@ async function viewSubjects() {
   const list = (rows.length ? rows.map(r => ({ name: r.subjects.name, teacher: (r.profiles || {}).full_name })) : ref.subjects.map(s => ({ name: s.name, teacher: "" })))
     .sort((a, b) => a.name.localeCompare(b.name));
   q("subBox").innerHTML = list.length
-    ? `<div class="cards">${list.map(s => `<div class="stat"><div class="stat-ic">${icon("book")}</div><div><div class="stat-v" style="font-size:1.1rem">${esc(s.name)}</div><div class="stat-s">${esc(s.teacher || "Teacher not assigned yet")}</div></div></div>`).join("")}</div>`
+    ? `<div class="cards">${list.map(s => `<div class="stat"><div class="stat-v" style="font-size:1.1rem">${esc(s.name)}</div><div class="stat-s">${esc(s.teacher || "Teacher not assigned yet")}</div></div>`).join("")}</div>`
     : empty("No subjects have been added yet.");
 }
 
@@ -1577,7 +1726,7 @@ async function viewResults() {
 async function attFamily() {
   if (!needKid()) return;
   const k = kid();
-  main.innerHTML = pageHead("Attendance", `${esc(k.full_name)} &middot; ${thisYear}`) + `<div id="atBox">${empty("Loading...")}</div>`;
+  main.innerHTML = pageHead("Attendance", `${esc(k.full_name)}, ${thisYear}`) + `<div id="atBox">${empty("Loading...")}</div>`;
   const a = await attSummary(k.id);
   if (activeKid !== k.id) return;
   if (!a || !a.total) { q("atBox").innerHTML = empty("No attendance has been recorded yet."); return; }
@@ -1604,62 +1753,95 @@ async function ttFamily() {
     ${slots.filter(s => s.day === i + 1).map(s => slotHtml(s)).join("") || '<p class="hint">No lessons</p>'}</div>`).join("")}</div>`;
 }
 
-async function feesFamily() {
-  if (!needKid()) return;
-  const k = kid();
-  main.innerHTML = pageHead("Fees", esc(k.full_name)) + `<div id="feeBox">${empty("Loading...")}</div>`;
-  const f = await feeStatement(k.id);
-  if (activeKid !== k.id) return;
-  if (!f || (!f.terms.length && !f.payments.length)) { q("feeBox").innerHTML = empty("The school has not set up fees for this class yet."); return; }
-  const charged = f.terms.reduce((a, t) => a + Number(t.charged), 0), paid = f.terms.reduce((a, t) => a + Number(t.paid), 0), bal = charged - paid;
-  q("feeBox").innerHTML = `
-    <div class="cards">
-      ${stat("Total charged", money(charged), "", "wallet")}
-      ${stat("Total paid", money(paid), "", "check", "good")}
-      ${stat("Balance", money(bal), bal > 0 ? "Outstanding" : "Paid up", "wallet", bal > 0 ? "warn" : "good")}
-    </div>
-    ${panel("By term", `<div class="tablewrap" style="margin:0"><table><thead><tr><th>Term</th><th class="num">Charged</th><th class="num">Paid</th><th class="num">Balance</th></tr></thead><tbody>
-      ${f.terms.map(t => { const b = Number(t.charged) - Number(t.paid); return `<tr><td>Term ${t.term}, ${t.year}</td><td class="num">${money(t.charged)}</td><td class="num">${money(t.paid)}</td><td class="num"><b>${money(b)}</b></td></tr>`; }).join("")}
-    </tbody></table></div>`)}
-    ${panel("Payments received", f.payments.length ? `<div class="tablewrap" style="margin:0"><table><thead><tr><th>Date</th><th>Term</th><th>Method</th><th>Reference</th><th class="num">Amount</th></tr></thead><tbody>
-      ${f.payments.map(p => `<tr><td>${esc(niceDate(p.date))}</td><td>Term ${p.term}, ${p.year}</td><td>${esc(p.method || "-")}</td><td>${esc(p.reference || "-")}</td><td class="num">${money(p.amount)}</td></tr>`).join("")}
-    </tbody></table></div>` : empty("No payments have been recorded yet."))}`;
-}
-
-/* announcements: everyone reads, admin posts */
+/* notices: everyone reads, the administrator posts (text, PDF or picture) */
 async function viewAnnouncements() {
   const admin = me.role === "admin";
-  main.innerHTML = pageHead("Announcements", "News and notices from the school.") +
-    (admin ? panel("Post an announcement", `
+  let current = [];
+  main.innerHTML = `<p class="crumb">Home &rsaquo; Notices</p>` + pageHead("Notices", "News and documents from the school.") +
+    (admin ? panel("Post a notice", `
       <form id="annForm" class="stack">
         <label>Title<input id="annTitle" required maxlength="140"></label>
         <label>Message<textarea id="annBody" required></textarea></label>
+        <label>Attach a file (optional)<input id="annFile" type="file" accept="application/pdf,image/jpeg,image/png,image/webp"></label>
+        <p class="hint" style="margin-top:-.4rem">A PDF, or a picture such as a poster (JPG, PNG or WebP), up to 10 MB.</p>
+        <div class="row">
+          <label>Show this notice for<select id="annDur"><option value="7">1 week</option><option value="14">2 weeks</option><option value="30" selected>1 month</option><option value="90">3 months</option><option value="0">Until I delete it</option><option value="custom">Until a date I choose</option></select></label>
+          <label id="annEndWrap" hidden>Last day<input id="annEnd" type="date" min="${todayStr()}"></label>
+        </div>
+        <p class="hint" style="margin-top:-.4rem">When the time is up, the notice disappears for everyone and is deleted along with its file.</p>
         <div class="row">
           <label>Who should see it<select id="annAud"><option value="all">Everyone</option><option value="students">Students</option><option value="parents">Parents</option><option value="teachers">Teachers</option></select></label>
           <label class="check"><input type="checkbox" id="annPin"> Pin to the top</label>
-          <button class="btn" type="submit">${icon("megaphone")} Post</button>
+          <button class="btn" type="submit" id="annBtn">Post notice</button>
         </div>
       </form>`) : "") +
     `<div id="annList">${empty("Loading...")}</div>`;
   const load = async () => {
-    const list = await annList(50);
-    q("annList").innerHTML = list.length ? list.map(a => annCard(a, admin)).join("") : empty("No announcements yet.");
+    current = await annList(50);
+    const paths = current.filter(a => a.attachment_path).map(a => a.attachment_path);
+    const urls = {};
+    if (paths.length) {
+      const r = await sb.storage.from("notices").createSignedUrls(paths, 3600);
+      (r.data || []).forEach(u => { if (u.signedUrl) urls[u.path] = u.signedUrl; });
+    }
+    const pinned = current.filter(a => a.pinned), rest = current.filter(a => !a.pinned);
+    q("annList").innerHTML = !current.length ? empty("No notices yet.") :
+      (pinned.length ? panel("Pinned notices", pinned.map(a => pinRow(a, admin, urls[a.attachment_path])).join("")) : "") +
+      rest.map(a => annCard(a, admin, urls[a.attachment_path])).join("");
   };
+  await purgeExpiredNotices();
   await load();
   markAnnouncementsSeen();
   if (admin) {
+    q("annDur").onchange = () => { q("annEndWrap").hidden = q("annDur").value !== "custom"; };
     q("annForm").onsubmit = async e => {
       e.preventDefault();
-      const { error } = await sb.from("announcements").insert({ title: q("annTitle").value.trim(), body: q("annBody").value.trim(), audience: q("annAud").value, pinned: q("annPin").checked });
-      if (error) return toast(error.message, true);
-      toast("Announcement posted.");
-      q("annForm").reset(); load();
+      let expires = null;
+      if (q("annDur").value === "custom") {
+        if (!q("annEnd").value) return toast("Choose the last day for this notice.", true);
+        const d = new Date(q("annEnd").value + "T00:00:00");
+        if (endOfDay(d) < new Date()) return toast("The last day must be today or later.", true);
+        expires = d.toISOString();
+      } else if (Number(q("annDur").value) > 0) expires = inDays(Number(q("annDur").value));
+      const f = q("annFile").files[0];
+      let att = {};
+      if (f) {
+        if (f.size > 10 * 1024 * 1024) return toast("That file is larger than 10 MB. Choose a smaller one.", true);
+        if (!/^(application\/pdf|image\/(jpeg|png|webp))$/.test(f.type)) return toast("Attach a PDF, JPG, PNG or WebP file.", true);
+      }
+      q("annBtn").disabled = true;
+      if (f) {
+        const id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(36).slice(2);
+        const path = id + "/" + f.name.replace(/[^A-Za-z0-9._-]+/g, "_");
+        const up = await sb.storage.from("notices").upload(path, f, { contentType: f.type });
+        if (up.error) { q("annBtn").disabled = false; return toast(up.error.message, true); }
+        att = { attachment_path: path, attachment_name: f.name, attachment_type: f.type };
+      }
+      const { error } = await sb.from("announcements").insert({ title: q("annTitle").value.trim(), body: q("annBody").value.trim(), audience: q("annAud").value, pinned: q("annPin").checked, expires_at: expires, ...att });
+      q("annBtn").disabled = false;
+      if (error) {
+        if (att.attachment_path) await sb.storage.from("notices").remove([att.attachment_path]);
+        return toast(error.message, true);
+      }
+      toast("Notice posted.");
+      q("annForm").reset(); q("annEndWrap").hidden = true; load();
     };
     main.onclick = async e => {
+      const ex = e.target.closest("[data-extend]");
+      if (ex) {
+        const a = current.find(x => x.id === +ex.dataset.extend);
+        const base = a && a.expires_at && new Date(a.expires_at) > new Date() ? new Date(a.expires_at) : new Date();
+        base.setDate(base.getDate() + 30);
+        const { error } = await sb.from("announcements").update({ expires_at: endOfDay(base).toISOString() }).eq("id", +ex.dataset.extend);
+        if (error) return toast(error.message, true);
+        toast("Extended by 30 days."); return load();
+      }
       const b = e.target.closest("[data-delann]");
-      if (!b || !confirm("Delete this announcement?")) return;
+      if (!b || !confirm("Delete this notice?")) return;
+      const a = current.find(x => x.id === +b.dataset.delann);
       const { error } = await sb.from("announcements").delete().eq("id", +b.dataset.delann);
       if (error) return toast(error.message, true);
+      if (a && a.attachment_path) await sb.storage.from("notices").remove([a.attachment_path]);
       toast("Deleted."); load();
     };
   }
@@ -1668,11 +1850,11 @@ async function viewAnnouncements() {
 /* ===================== teacher pages (some shared with admin) ===================== */
 
 async function dashTeacher() {
-  main.innerHTML = pageHead(`Good day, ${first(me.full_name)}`, "Your classes and lessons.") + `<div class="cards">${[1, 2, 3].map(() => `<div class="stat skel"></div>`).join("")}</div>`;
+  main.innerHTML = staffCover("Teacher", "Your classes and lessons this term.") + `<div class="cards">${[1, 2, 3].map(() => `<div class="stat skel"></div>`).join("")}</div>`;
   const [slots, anns] = await Promise.all([slotsFor({ teacher_id: me.id }, todayDow()), annList(3)]);
   if (curModule !== "dashboard") return;
   const nClasses = new Set(assigns.map(a => a.class_id)).size, nSubjects = new Set(assigns.map(a => a.subject_id)).size;
-  main.innerHTML = pageHead(`Good day, ${first(me.full_name)}`, "Your classes and lessons.") + `
+  main.innerHTML = staffCover("Teacher", "Your classes and lessons this term.") + `
     <div class="cards">
       ${stat("My classes", String(nClasses), nClasses ? "" : "None assigned yet", "users")}
       ${stat("My subjects", String(nSubjects), "", "book")}
@@ -1682,10 +1864,10 @@ async function dashTeacher() {
       ${panel("Today's lessons", todayDow() ? (slots.length ? slots.map(s => slotHtml(s, clsName(s.class_id))).join("") : empty("No lessons on your timetable today.")) : empty("No lessons on weekends."))}
       <div>
         ${panel("Quick actions", `<div class="quick">
-          <button class="btn" data-go="attendance">${icon("check")} Record attendance</button>
-          <button class="btn ghost" data-go="marks">${icon("pencil")} Enter marks</button>
-          <button class="btn ghost" data-go="analytics">${icon("chart")} Class analytics</button></div>`)}
-        ${panel("Latest announcements", anns.length ? `<ul class="plain">${anns.map(a => `<li><b>${esc(a.title)}</b><div class="hint">${esc(niceDate(a.created_at))}</div></li>`).join("")}</ul>` : empty("No announcements yet."))}
+          <button class="btn" data-go="attendance">Record attendance</button>
+          <button class="btn ghost" data-go="marks">Enter marks</button>
+          <button class="btn ghost" data-go="analytics">Class analytics</button></div>`)}
+        ${panel("Latest notices", anns.length ? `<ul class="plain">${anns.map(a => `<li><b>${esc(a.title)}</b><div class="hint">${esc(niceDate(a.created_at))}</div></li>`).join("")}</ul>` : empty("No notices yet."))}
       </div>
     </div>
     ${nClasses ? "" : empty("The administrator has not assigned you to any class yet. Until then you cannot enter marks or take attendance.")}`;
@@ -1701,7 +1883,7 @@ async function viewMyClasses() {
   rows.forEach(r => { (byClass[r.class_id] = byClass[r.class_id] || { name: (r.classes || {}).name || "-", subs: [] }).subs.push((r.subjects || {}).name || "-"); });
   const ids = Object.keys(byClass).map(Number);
   main.innerHTML = pageHead("My classes", "Classes and subjects you teach.") +
-    `<div class="cards">${ids.map(id => `<div class="stat"><div class="stat-ic">${icon("users")}</div><div><div class="stat-v" style="font-size:1.2rem">${esc(byClass[id].name)}</div><div class="stat-s">${esc(byClass[id].subs.join(", "))}</div><div style="margin-top:.5rem"><button class="btn ghost sm" data-cls="${id}">Student list</button></div></div></div>`).join("")}</div>
+    `<div class="cards">${ids.map(id => `<div class="stat"><div class="stat-v" style="font-size:1.2rem">${esc(byClass[id].name)}</div><div class="stat-s">${esc(byClass[id].subs.join(", "))}</div><div style="margin-top:.6rem"><button class="btn ghost sm" data-cls="${id}">Student list</button></div></div>`).join("")}</div>
      <div id="stuList"></div>`;
   main.onclick = async e => {
     const b = e.target.closest("[data-cls]");
@@ -1751,7 +1933,7 @@ async function attStaff() {
         <button class="btn ghost" id="aAll" type="button">Mark everyone present</button>
         <span class="hint" id="aCount"></span>
       </div>
-      <div class="tablewrap"><table><thead><tr><th>Student</th><th>Reg number</th><th>Present, Late or Absent</th></tr></thead><tbody>
+      <div class="tablewrap tall"><table><thead><tr><th>Student</th><th>Reg number</th><th>Present, Late or Absent</th></tr></thead><tbody>
       ${studs.map(s => { const st = by[s.id] || "present"; return `<tr data-sid="${s.id}" data-find="${esc((s.full_name + " " + (s.reg_number || "")).toLowerCase())}">
         <td>${esc(s.full_name)}</td><td>${esc(s.reg_number || "")}</td>
         <td><div class="seg" role="radiogroup" aria-label="Attendance for ${esc(s.full_name)}">
@@ -1760,7 +1942,7 @@ async function attStaff() {
           <label><input type="radio" name="a${s.id}" value="absent" ${st === "absent" ? "checked" : ""}><span class="a">A</span></label>
         </div></td></tr>`; }).join("")}
       </tbody></table></div>
-      <button class="btn" id="aSave">Save register</button>`;
+      <div class="savebar"><span class="hint" id="aCount2">Tap P, L or A for each student, then save.</span><button class="btn" id="aSave">Save register</button></div>`;
     const recount = () => {
       const c = { present: 0, late: 0, absent: 0 };
       box.querySelectorAll("input[type=radio]:checked").forEach(r => { c[r.value]++; });
@@ -1780,6 +1962,33 @@ async function attStaff() {
     };
   };
   ["aClass", "aDate"].forEach(id => q(id).onchange = load);
+  load();
+}
+
+
+/* read-only attendance overview for the administrator */
+async function attAdmin() {
+  main.innerHTML = pageHead("Attendance overview", "Teachers take the registers. This is a read-only view for the school.") +
+    `<div class="filters"><label>Date<input id="adDate" type="date" value="${todayStr()}" max="${todayStr()}"></label></div><div id="adBox">${empty("Loading...")}</div>`;
+  const load = async () => {
+    const date = q("adDate").value;
+    if (!date) return;
+    q("adBox").innerHTML = empty("Loading...");
+    let recs;
+    try {
+      recs = await fetchAll(() => sb.from("attendance").select("student_id,status,students!inner(class_id,full_name,reg_number)").eq("att_date", date).order("student_id"));
+    } catch (err) { return toast(err.message, true); }
+    const per = {};
+    ref.classes.forEach(c => { per[c.id] = { present: 0, late: 0, absent: 0, miss: [] }; });
+    recs.forEach(r => { const pc = per[r.students.class_id]; if (!pc) return; pc[r.status]++; if (r.status !== "present") pc.miss.push(r); });
+    if (!recs.length) { q("adBox").innerHTML = empty("No register has been taken on this date yet."); return; }
+    q("adBox").innerHTML = `
+      <div class="tablewrap"><table><thead><tr><th>Class</th><th class="num">Marked</th><th class="num">Present</th><th class="num">Late</th><th class="num">Absent</th><th class="num">Rate</th></tr></thead><tbody>
+      ${ref.classes.map(c => { const x = per[c.id], n = x.present + x.late + x.absent; return `<tr><td>${esc(c.name)}</td><td class="num">${n || "-"}</td><td class="num">${n ? x.present : "-"}</td><td class="num">${n ? x.late : "-"}</td><td class="num">${n ? x.absent : "-"}</td><td class="num">${n ? Math.round((x.present + x.late) / n * 100) + "%" : "Not taken"}</td></tr>`; }).join("")}
+      </tbody></table></div>
+      ${ref.classes.filter(c => per[c.id].miss.length).map(c => panel(`${c.name}: absent or late`, `<ul class="plain">${per[c.id].miss.map(r => `<li>${esc(r.students.full_name)} <span class="hint">${esc(r.students.reg_number || "")}</span> <span class="tag ${r.status}" style="float:right">${esc(r.status)}</span></li>`).join("")}</ul>`)).join("")}`;
+  };
+  q("adDate").onchange = load;
   load();
 }
 
@@ -1834,10 +2043,10 @@ async function viewAnalytics() {
     const rankList = list => `<ul class="plain">${list.map(r => `<li>${esc(r.name)} <b style="float:right">${r.avg.toFixed(1)}%</b></li>`).join("")}</ul>`;
     box.innerHTML = `
       <div class="cards">
-        ${stat("Class average", mean.toFixed(1) + "%", `${Object.keys(per).length} students with marks`, "chart", toneClass(mean))}
+        ${stat("Class average", mean.toFixed(1) + "%", `${Object.keys(per).length} students with marks`, "chart", toneClass(mean), mean)}
         ${stat("Highest mark", Math.max(...scores).toString(), "", "check", "good")}
         ${stat("Lowest mark", Math.min(...scores).toString(), "", "clock", "bad")}
-        ${stat("Pass rate (50%+)", pass + "%", "", "results", toneClass(pass))}
+        ${stat("Pass rate (50%+)", pass + "%", "", "results", toneClass(pass), pass)}
       </div>
       <div class="grid2">
         ${panel("Grade distribution", hbars(Object.entries(dist).map(([g, n]) => ({ label: "Grade " + g, pct: n / maxN * 100, text: String(n) }))))}
@@ -1876,7 +2085,7 @@ async function ttStaff() {
         <label>Subject<select id="tSub"><option value="">Free period</option>${idOpts(ref.subjects, "name")}</select></label>
         <label>Teacher<select id="tTeach"><option value="">Not set</option>${idOpts(teachers, "full_name")}</select></label>
         <label>Room<input id="tRoom" placeholder="e.g. Room 4"></label>
-        <button class="btn" type="submit">${icon("plus")} Add lesson</button>
+        <button class="btn" type="submit">Add lesson</button>
       </form>`)}
     <div id="tList"></div>`;
   const load = async () => {
@@ -1907,7 +2116,7 @@ async function ttStaff() {
 /* ===================== administrator pages ===================== */
 
 async function dashAdmin() {
-  main.innerHTML = pageHead(`Good day, ${first(me.full_name)}`, `Overview of ${esc(SCHOOL_NAME)}`) + `<div class="cards">${[1, 2, 3, 4].map(() => `<div class="stat skel"></div>`).join("")}</div>`;
+  main.innerHTML = staffCover("Administrator", `Everything happening at ${esc(SCHOOL_NAME)}.`) + `<div class="cards">${[1, 2, 3, 4].map(() => `<div class="stat skel"></div>`).join("")}</div>`;
   const [st, fees, regs, anns] = await Promise.all([
     sb.rpc("admin_stats", { p_today: todayStr() }).then(r => r.error ? null : r.data),
     sb.rpc("fees_overview", { p_year: thisYear, p_term: SETTINGS.current_term }).then(r => r.error ? null : r.data),
@@ -1918,12 +2127,21 @@ async function dashAdmin() {
   const s = st || {};
   const attRate = s.att_total ? Math.round(s.att_present / s.att_total * 100) : null;
   const exp = fees ? Number(fees.expected) : 0, col = fees ? Number(fees.collected) : 0;
-  main.innerHTML = pageHead(`Good day, ${first(me.full_name)}`, `Overview of ${esc(SCHOOL_NAME)}`) + `
+  const steps = [
+    ["Set the school name and logo", SETTINGS.school_name !== "Your School Name" || !!SETTINGS.logo_url, "settings", "Open settings"],
+    ["Add the classes and subjects", (s.classes || 0) > 0 && (s.subjects || 0) > 0, "classes", "Add them"],
+    ["Import the student list", (s.students || 0) > 0, "students", "Import students"],
+    ["Invite the teachers and give them their classes", (s.teachers || 0) > 0, "teachers", "Invite teachers"],
+    ["Invite the accounts office, who set the fees", exp > 0 || col > 0, "accounts", "Invite them"]
+  ];
+  const firstTodo = steps.findIndex(x => !x[1]);
+  const checklist = firstTodo === -1 ? "" : panel("Set up your school", `<ol class="steps">${steps.map((x, i) => `<li class="${x[1] ? "done" : ""}"><span class="step-n">${x[1] ? "&#10003;" : i + 1}</span><span class="step-t">${esc(x[0])}</span>${i === firstTodo ? `<button class="btn sm" data-go="${x[2]}">${esc(x[3])}</button>` : ""}</li>`).join("")}</ol>`);
+  main.innerHTML = staffCover("Administrator", `Everything happening at ${esc(SCHOOL_NAME)}.`) + checklist + `
     <div class="cards">
       ${stat("Students", String(s.students ?? "-"), `${s.registered ?? 0} have opened accounts`, "users")}
       ${stat("Teachers", String(s.teachers ?? "-"), `${s.classes ?? 0} classes, ${s.subjects ?? 0} subjects`, "user")}
       ${stat("Parents", String(s.parents ?? "-"), "", "users")}
-      ${stat("Attendance today", attRate == null ? "-" : attRate + "%", attRate == null ? "Register not taken yet" : `${s.att_present} of ${s.att_total} present`, "check", attRate == null ? "" : toneClass(attRate))}
+      ${stat("Attendance today", attRate == null ? "-" : attRate + "%", attRate == null ? "Register not taken yet" : `${s.att_present} of ${s.att_total} present`, "check", attRate == null ? "" : toneClass(attRate), attRate == null ? null : attRate)}
     </div>
     <div class="grid2">
       ${panel(`Fees, term ${SETTINGS.current_term} ${thisYear}`, exp || col
@@ -1931,14 +2149,14 @@ async function dashAdmin() {
           `<p style="margin-top:1rem">Outstanding: <b>${money(Math.max(0, exp - col))}</b></p><div class="quick"><button class="btn ghost sm" data-go="fees">View fees</button></div>`
         : empty("The accounts office has not set fees for this term yet."))}
       ${panel("Newest registrations", regs.length
-        ? `<ul class="plain">${regs.map(r => `<li><b>${esc(r.students.full_name)}</b> <span class="hint">${esc(r.students.reg_number)} &middot; ${esc(clsName(r.students.class_id))}</span></li>`).join("")}</ul><div class="quick" style="margin-top:.8rem"><button class="btn ghost sm" data-go="registrations">See all</button></div>`
+        ? `<ul class="plain">${regs.map(r => `<li><b>${esc(r.students.full_name)}</b> <span class="hint">${esc(r.students.reg_number)}, ${esc(clsName(r.students.class_id))}</span></li>`).join("")}</ul><div class="quick" style="margin-top:.8rem"><button class="btn ghost sm" data-go="registrations">See all</button></div>`
         : empty("No student has opened an account yet."))}
       ${panel("Quick actions", `<div class="quick">
-        <button class="btn" data-go="announcements">${icon("megaphone")} Post announcement</button>
-        <button class="btn ghost" data-go="students">${icon("upload")} Import students</button>
-        <button class="btn ghost" data-go="attendance">${icon("check")} Attendance</button>
-        <button class="btn ghost" data-go="settings">${icon("cog")} Settings</button></div>`)}
-      ${panel("Latest announcements", anns.length ? `<ul class="plain">${anns.map(a => `<li><b>${esc(a.title)}</b><div class="hint">${esc(niceDate(a.created_at))}</div></li>`).join("")}</ul>` : empty("No announcements yet."))}
+        <button class="btn" data-go="announcements">Post a notice</button>
+        <button class="btn ghost" data-go="students">Import students</button>
+        <button class="btn ghost" data-go="attendance">Attendance</button>
+        <button class="btn ghost" data-go="settings">Settings</button></div>`)}
+      ${panel("Latest notices", anns.length ? `<ul class="plain">${anns.map(a => `<li><b>${esc(a.title)}</b><div class="hint">${esc(niceDate(a.created_at))}</div></li>`).join("")}</ul>` : empty("No notices yet."))}
     </div>`;
 }
 
@@ -1948,7 +2166,7 @@ async function viewStudentsAdmin() {
     ${panel("Import the student list", `
       <p id="stCount"></p>
       <p>Save the Excel list as CSV with the headings <b>reg_number</b>, <b>full_name</b> and <b>class</b>. If you also have dates of birth, add a <b>dob</b> column (like 15/03/2010) and students must enter the same date to register. Students can only create an account if their reg number and name are in this list. Missing classes are created for you.</p>
-      <div class="row"><label>Student list (CSV file)<input id="impFile" type="file" accept=".csv,text/csv"></label><button class="btn" id="impGo">${icon("upload")} Import students</button></div>
+      <div class="row"><label>Student list (CSV file)<input id="impFile" type="file" accept=".csv,text/csv"></label><button class="btn" id="impGo">Import students</button></div>
       <p id="impStatus" class="hint" style="margin-top:.6rem"></p>`)}
     ${panel("Add one student", `
       <form class="row" id="fStudent">
@@ -2102,7 +2320,7 @@ async function viewTeachersAdmin() {
       </form>` : empty("Add at least one teacher login, one class and one subject first."))}
     ${panel("Who teaches what", teachers.length ? teachers.map(tc => {
       const mine = a.filter(x => x.teacher_id === tc.id);
-      return `<h4 style="margin-top:1rem">${esc(tc.full_name)}</h4><div class="chips" style="margin-top:.4rem">${mine.length ? mine.map(x => `<span class="chip">${esc((x.classes || {}).name)} &middot; ${esc((x.subjects || {}).name)}<button class="chip-x" data-unas="${x.id}" aria-label="Remove">&times;</button></span>`).join("") : '<span class="hint">Nothing assigned yet</span>'}</div>`;
+      return `<h4 style="margin-top:1rem">${esc(tc.full_name)}</h4><div class="chips" style="margin-top:.4rem">${mine.length ? mine.map(x => `<span class="chip">${esc((x.classes || {}).name)}, ${esc((x.subjects || {}).name)}<button class="chip-x" data-unas="${x.id}" aria-label="Remove">&times;</button></span>`).join("") : '<span class="hint">Nothing assigned yet</span>'}</div>`;
     }).join("") : empty("No teacher logins yet."))}
     ${invitePanelHtml("teacher")}
     ${invitePendingHtml()}`;
@@ -2192,11 +2410,11 @@ async function viewAccounts() {
 async function viewFees() {
   await loadRef();
   const edit = me.role === "accounts";
-  main.innerHTML = pageHead(edit ? "Fees" : "Fees overview", edit ? "Set what each class pays and record payments." : "A read-only view. The accounts office sets fees and records payments.") + `<div id="fvBox">${empty("Loading...")}</div>`;
+  main.innerHTML = pageHead(edit ? "Fees" : "Fees overview", edit ? "Set what each class pays. Record what students pay under Record payments." : "A read-only view. The accounts office sets fees and records payments.") + `<div id="fvBox">${empty("Loading...")}</div>`;
   const [ov, chargesRes, payRes] = await Promise.all([
     sb.rpc("fees_overview", { p_year: thisYear, p_term: SETTINGS.current_term }).then(r => r.error ? null : r.data),
-    sb.from("fee_charges").select("id,class_id,year,term,description,amount").order("year", { ascending: false }).order("term").limit(100),
-    sb.from("fee_payments").select("id,amount,paid_on,method,reference,year,term,students(full_name,reg_number)").order("id", { ascending: false }).limit(20)
+    sb.from("fee_charges").select("id,class_id,year,term,description,amount,invoice_date").order("year", { ascending: false }).order("term").limit(100),
+    sb.from("fee_payments").select("id,amount,paid_on,method,bank_name,reference,status,year,term,students(full_name,reg_number)").order("id", { ascending: false }).limit(25)
   ]);
   const charges = chargesRes.data || [], pays = payRes.data || [];
   const exp = ov ? Number(ov.expected) : 0, col = ov ? Number(ov.collected) : 0;
@@ -2209,21 +2427,6 @@ async function viewFees() {
       ${stat("Results rule", need > 0 ? need + "%" : "Off", need > 0 ? "of fees must be paid to see results" : "Everyone sees published results", "shield")}
     </div>
     ${edit ? `<div class="grid2">
-      ${panel("Record a payment", `
-        <form id="fPay" class="stack">
-          <label>Student reg number<input id="pReg" required></label>
-          <div class="row">
-            <label>Term<select id="pTerm">${termOpts(SETTINGS.current_term)}</select></label>
-            <label>Year<input id="pYear" type="number" value="${thisYear}" style="width:6rem"></label>
-            <label>Amount<input id="pAmt" type="number" min="0.01" step="0.01" required style="width:8rem"></label>
-          </div>
-          <div class="row">
-            <label>Date<input id="pDate" type="date" value="${todayStr()}"></label>
-            <label>Method<select id="pMethod"><option>Cash</option><option>EcoCash</option><option>Bank transfer</option><option>Other</option></select></label>
-            <label>Reference (optional)<input id="pRef"></label>
-          </div>
-          <button class="btn" type="submit">Record payment</button>
-        </form>`)}
       ${panel("Set fees for a class", `
         <form id="fCharge" class="stack">
           <div class="row">
@@ -2234,38 +2437,33 @@ async function viewFees() {
           <div class="row">
             <label>Description<input id="cDesc" value="School fees"></label>
             <label>Amount<input id="cAmt" type="number" min="0" step="0.01" required style="width:8rem"></label>
+            <label>Invoice date<input id="cDate" type="date" value="${todayStr()}"></label>
           </div>
           <button class="btn" type="submit">Save fee</button>
         </form>`)}
     </div>` : ""}
-    ${panel("Fees set", charges.length ? `<div class="tablewrap" style="margin:0"><table><thead><tr><th>Class</th><th>Term</th><th>Description</th><th class="num">Amount</th>${edit ? "<th></th>" : ""}</tr></thead><tbody>
-      ${charges.map(c => `<tr><td>${esc(clsName(c.class_id))}</td><td>Term ${c.term}, ${c.year}</td><td>${esc(c.description)}</td><td class="num">${money(c.amount)}</td>${edit ? `<td class="num"><button class="btn danger" data-delchg="${c.id}">Delete</button></td>` : ""}</tr>`).join("")}
+    ${panel("Fees set", charges.length ? `<div class="tablewrap" style="margin:0"><table><thead><tr><th>Class</th><th>Term</th><th>Description</th><th>Invoice date</th><th class="num">Amount</th>${edit ? "<th></th>" : ""}</tr></thead><tbody>
+      ${charges.map(c => `<tr><td>${esc(clsName(c.class_id))}</td><td>Term ${c.term}, ${c.year}</td><td>${esc(c.description)}</td><td>${esc(niceDate(c.invoice_date))}</td><td class="num">${money(c.amount)}</td>${edit ? `<td class="num"><button class="btn danger" data-delchg="${c.id}">Delete</button></td>` : ""}</tr>`).join("")}
       </tbody></table></div>` : empty("No fees set yet."))}
-    ${panel("Recent payments", pays.length ? `<div class="tablewrap" style="margin:0"><table><thead><tr><th>Date</th><th>Student</th><th>Term</th><th>Method</th><th class="num">Amount</th></tr></thead><tbody>
-      ${pays.map(p => `<tr><td>${esc(niceDate(p.paid_on))}</td><td>${esc((p.students || {}).full_name || "-")} <span class="hint">${esc((p.students || {}).reg_number || "")}</span></td><td>Term ${p.term}, ${p.year}</td><td>${esc(p.method || "-")}</td><td class="num">${money(p.amount)}</td></tr>`).join("")}
+    ${panel("Recent payments", pays.length ? `<div class="tablewrap" style="margin:0"><table><thead><tr><th>Date</th><th>Student</th><th>Receipt no.</th><th>Term</th><th>Method</th><th>Bank</th><th class="num">Amount</th><th>Status</th>${edit ? "<th></th>" : ""}</tr></thead><tbody>
+      ${pays.map(p => `<tr><td>${esc(niceDate(p.paid_on))}</td><td>${esc((p.students || {}).full_name || "-")} <span class="hint">${esc((p.students || {}).reg_number || "")}</span></td><td>${esc(receiptNo({ reference: p.reference, id: p.id }))}</td><td>Term ${p.term}, ${p.year}</td><td>${esc(p.method || "-")}</td><td>${esc(p.bank_name || "-")}</td><td class="num">${money(p.amount)}</td><td><span class="tag ${p.status === "confirmed" ? "good" : "bad"}">${p.status === "confirmed" ? "Confirmed" : "Reversed"}</span></td>${edit ? `<td class="num">${p.status === "confirmed" ? `<button class="btn danger" data-reverse="${p.id}">Reverse</button>` : ""}</td>` : ""}</tr>`).join("")}
       </tbody></table></div>` : empty("No payments recorded yet."))}`;
   if (!edit) return;
-  q("fPay").onsubmit = async e => {
-    e.preventDefault();
-    try {
-      const st = await findStudentByReg(q("pReg").value);
-      if (!st) return toast("No student has that registration number.", true);
-      const { error } = await sb.from("fee_payments").insert({ student_id: st.id, term: +q("pTerm").value, year: +q("pYear").value, amount: +q("pAmt").value, paid_on: q("pDate").value, method: q("pMethod").value, reference: q("pRef").value.trim() || null });
-      if (error) return toast(error.message, true);
-      const f = await feeStatement(st.id);
-      const bal = f ? f.terms.reduce((a, t) => a + Number(t.charged) - Number(t.paid), 0) : null;
-      toast(`Recorded ${money(q("pAmt").value)} for ${st.full_name}.${bal == null ? "" : " Balance: " + money(bal)}`);
-      viewFees();
-    } catch (err) { toast(err.message, true); }
-  };
   q("fCharge").onsubmit = async e => {
     e.preventDefault();
     if (!q("cClass").value) return toast("Add a class first.", true);
-    const { error } = await sb.from("fee_charges").insert({ class_id: +q("cClass").value, term: +q("cTerm").value, year: +q("cYear").value, description: q("cDesc").value.trim() || "School fees", amount: +q("cAmt").value });
+    const { error } = await sb.from("fee_charges").insert({ class_id: +q("cClass").value, term: +q("cTerm").value, year: +q("cYear").value, description: q("cDesc").value.trim() || "School fees", amount: +q("cAmt").value, invoice_date: q("cDate").value || todayStr() });
     if (error) return toast(error.message, true);
     toast("Fee saved."); viewFees();
   };
   main.onclick = async e => {
+    const rv = e.target.closest("[data-reverse]");
+    if (rv) {
+      if (!confirm("Reverse this payment? It stays on record but no longer counts toward the balance.")) return;
+      const { error } = await sb.from("fee_payments").update({ status: "reversed" }).eq("id", +rv.dataset.reverse);
+      if (error) return toast(error.message, true);
+      toast("Payment reversed."); return viewFees();
+    }
     const b = e.target.closest("[data-delchg]");
     if (!b || !confirm("Delete this fee?")) return;
     const { error } = await sb.from("fee_charges").delete().eq("id", +b.dataset.delchg);
@@ -2274,24 +2472,32 @@ async function viewFees() {
   };
 }
 
-/* who has paid, who can see results, and exceptions */
+/* class payment grid: the accounts office sees every student and types what they paid */
 async function viewFeeBalances() {
   await loadRef();
   const edit = me.role === "accounts";
-  if (!ref.classes.length) { main.innerHTML = pageHead("Fee balances") + empty("Add a class first."); return; }
+  if (!ref.classes.length) { main.innerHTML = pageHead(edit ? "Record payments" : "Fee balances") + empty("Add a class first."); return; }
   const need = Number(SETTINGS.results_min_fees_percent ?? 0);
-  main.innerHTML = pageHead("Fee balances", need > 0 ? `Students must have paid ${need}% of the fees due so far this year to see their results.` : "The results rule is switched off, so everyone sees published results.") + `
+  main.innerHTML = pageHead(edit ? "Record payments" : "Fee balances",
+      edit ? "Choose a class, type what each student paid, then save. Balances update straight away." :
+      need > 0 ? `Students must have paid ${need}% of the fees due so far this year to see their results.` : "The results rule is switched off, so everyone sees published results.") + `
+    ${edit ? `<div class="filters"><label>Find a student in any class<input id="fbFind" placeholder="Name or reg number"></label><div id="fbJump" class="quick"></div></div>` : ""}
     <div class="filters">
       <label>Class<select id="fbClass">${idOpts(ref.classes, "name")}</select></label>
       <label>Term<select id="fbTerm">${termOpts(SETTINGS.current_term)}</select></label>
       <label>Year<input id="fbYear" type="number" value="${thisYear}" min="2000" max="2100"></label>
+      ${edit ? `<label>Date received<input id="fbDate" type="date" value="${todayStr()}" max="${todayStr()}"></label>
+      <label>Method<select id="fbMethod"><option>Cash</option><option>EcoCash</option><option>Bank transfer</option><option>Other</option></select></label>
+      <label id="fbBankWrap" hidden>Bank name<input id="fbBank" placeholder="e.g. CBZ"></label>` : ""}
       <label class="check"><input type="checkbox" id="fbHeld"> Show only students whose results are held</label>
     </div>
     <div id="fbBox">${empty("Loading...")}</div>`;
   let rows = [], year = 0, term = 0;
+  const applyFilter = () => {
+    const t = (q("fbSearch") ? q("fbSearch").value : "").trim().toLowerCase(), heldOnly = q("fbHeld").checked;
+    q("fbBox").querySelectorAll("tbody tr[data-find]").forEach(tr => { tr.hidden = (t && !tr.dataset.find.includes(t)) || (heldOnly && tr.dataset.status !== "held"); });
+  };
   const draw = () => {
-    const heldOnly = q("fbHeld").checked;
-    const list = rows.filter(r => !heldOnly || r.status === "held");
     const held = rows.filter(r => r.status === "held").length;
     const charged = rows.reduce((a, r) => a + r.charged, 0), paid = rows.reduce((a, r) => a + r.paid, 0);
     q("fbBox").innerHTML = `
@@ -2301,14 +2507,42 @@ async function viewFeeBalances() {
         ${stat("Charged to date", money(charged), "", "wallet")}
         ${stat("Paid to date", money(paid), "", "check", "good")}
       </div>
-      <label class="hint" style="margin-bottom:1rem;display:block">Find a student <input id="fbSearch" placeholder="Name or reg number" style="margin-left:.5rem"></label>
-      <div class="tablewrap"><table><thead><tr><th>Student</th><th class="num">Charged</th><th class="num">Paid</th><th class="num">% paid</th><th>Results</th>${edit ? "<th></th>" : ""}</tr></thead><tbody>
-      ${list.map(r => `<tr data-find="${esc((r.name + " " + (r.reg || "")).toLowerCase())}"><td>${esc(r.name)}<br><span class="hint">${esc(r.reg || "")}</span></td>
-        <td class="num">${money(r.charged)}</td><td class="num">${money(r.paid)}</td><td class="num">${r.charged > 0 ? r.pct + "%" : "-"}</td>
+      <div class="filters"><label>Find in this class<input id="fbSearch" placeholder="Name or reg number"></label></div>
+      <div class="tablewrap tall"><table><thead><tr><th>Student</th><th class="num">Charged</th><th class="num">Paid</th><th class="num">Balance</th><th class="num">% paid</th><th>Results</th>${edit ? '<th class="num">Paid now</th><th>Receipt no.</th><th></th>' : ""}</tr></thead><tbody>
+      ${rows.map(r => `<tr data-sid="${r.id}" data-status="${r.status}" data-find="${esc((r.name + " " + (r.reg || "")).toLowerCase())}"><td>${esc(r.name)}<br><span class="hint">${esc(r.reg || "")}</span></td>
+        <td class="num">${money(r.charged)}</td><td class="num">${money(r.paid)}</td><td class="num"><b>${money(Math.max(0, r.charged - r.paid))}</b></td><td class="num">${r.charged > 0 ? r.pct + "%" : "-"}</td>
         <td>${r.status === "held" ? '<span class="tag bad">Held</span>' : r.status === "allowed" ? '<span class="tag warn">Allowed by accounts</span>' : '<span class="tag good">Fees cleared</span>'}</td>
-        ${edit ? `<td class="num">${r.status === "allowed" ? `<button class="btn ghost sm" data-unallow="${r.id}">Remove exception</button>` : r.status === "held" ? `<button class="btn ghost sm" data-allow="${r.id}">Allow results</button>` : ""}</td>` : ""}</tr>`).join("") || `<tr><td colspan="6">No students to show.</td></tr>`}
-      </tbody></table></div>`;
-    q("fbSearch").oninput = e => { const t = e.target.value.trim().toLowerCase(); q("fbBox").querySelectorAll("tbody tr[data-find]").forEach(tr => tr.hidden = t && !tr.dataset.find.includes(t)); };
+        ${edit ? `<td class="num"><input class="pay" type="number" min="0" step="0.01" style="width:7rem;text-align:right" aria-label="Paid now by ${esc(r.name)}"></td>
+          <td><input class="refno" style="width:7rem" aria-label="Receipt number for ${esc(r.name)}"></td>
+          <td class="num">${r.status === "allowed" ? `<button class="btn ghost sm" data-unallow="${r.id}">Remove exception</button>` : r.status === "held" ? `<button class="btn ghost sm" data-allow="${r.id}">Allow results</button>` : ""}</td>` : ""}</tr>`).join("") || `<tr><td colspan="9">No students in this class.</td></tr>`}
+      </tbody></table></div>
+      ${edit ? `<div class="savebar"><span class="hint">Type what each student paid now, then save. Enter moves to the next student.</span><button class="btn" id="fbSave" type="button">Save payments</button></div>` : ""}`;
+    q("fbSearch").oninput = applyFilter;
+    applyFilter();
+    if (edit && q("fbSave")) q("fbSave").onclick = async () => {
+      const date = q("fbDate").value, method = q("fbMethod").value, out = [];
+      const bank = method === "Bank transfer" ? q("fbBank").value.trim() : "";
+      if (!date) return toast("Choose the date the money was received.", true);
+      if (method === "Bank transfer" && !bank) return toast("Type the bank name for a bank transfer.", true);
+      for (const tr of q("fbBox").querySelectorAll("tbody tr[data-sid]")) {
+        const inp = tr.querySelector("input.pay");
+        if (!inp || inp.value === "") continue;
+        const v = Number(inp.value);
+        if (isNaN(v) || v < 0) return toast("Check the amounts. They must be numbers.", true);
+        if (v === 0) continue;
+        out.push({ student_id: +tr.dataset.sid, term, year, amount: v, paid_on: date, method, bank_name: bank || null, reference: tr.querySelector("input.refno").value.trim() || null });
+      }
+      if (!out.length) return toast("Type at least one amount.", true);
+      const total = out.reduce((a, r) => a + r.amount, 0);
+      if (!confirm(`Record ${out.length} payment${out.length === 1 ? "" : "s"} totalling ${money(total)} for Term ${term}, ${year}?`)) return;
+      q("fbSave").disabled = true;
+      for (let i = 0; i < out.length; i += 200) {
+        const { error } = await sb.from("fee_payments").insert(out.slice(i, i + 200));
+        if (error) { q("fbSave").disabled = false; return toast(error.message, true); }
+      }
+      toast(`Recorded ${out.length} payment${out.length === 1 ? "" : "s"}, ${money(total)} in total.`);
+      load();
+    };
   };
   const load = async () => {
     const classId = +q("fbClass").value; year = +q("fbYear").value; term = +q("fbTerm").value;
@@ -2323,26 +2557,44 @@ async function viewFeeBalances() {
     draw();
   };
   ["fbClass", "fbTerm", "fbYear"].forEach(id => q(id).onchange = load);
-  q("fbHeld").onchange = draw;
-  if (edit) main.onclick = async e => {
-    const al = e.target.closest("[data-allow]"), un = e.target.closest("[data-unallow]");
-    if (al) {
-      const reason = prompt("Reason for allowing this student to see results (optional):");
-      if (reason === null) return;
-      const { error } = await sb.from("results_exceptions").upsert({ student_id: +al.dataset.allow, year, term, reason: reason.trim() || null }, { onConflict: "student_id,year,term" });
-      if (error) return toast(error.message, true);
-      toast("This student can now see their results."); load();
-    } else if (un) {
-      const { error } = await sb.from("results_exceptions").delete().eq("student_id", +un.dataset.unallow).eq("year", year).eq("term", term);
-      if (error) return toast(error.message, true);
-      toast("Exception removed."); load();
-    }
-  };
+  q("fbHeld").onchange = applyFilter;
+  if (edit) {
+    q("fbMethod").onchange = () => { q("fbBankWrap").hidden = q("fbMethod").value !== "Bank transfer"; };
+    let jt;
+    q("fbFind").oninput = () => {
+      clearTimeout(jt);
+      jt = setTimeout(async () => {
+        const t = likeSafe(q("fbFind").value), box = q("fbJump");
+        if (t.length < 2) { box.innerHTML = ""; return; }
+        const { data } = await sb.from("students").select("id,full_name,reg_number,class_id").or(`full_name.ilike.%${t}%,reg_number.ilike.%${t}%`).order("full_name").limit(8);
+        box.innerHTML = (data || []).map(s => `<button type="button" class="btn ghost sm" data-jump="${s.class_id}" data-reg="${esc(s.reg_number || "")}">${esc(s.full_name)}, ${esc(s.reg_number || "")}</button>`).join("") || '<span class="hint">No match</span>';
+      }, 300);
+    };
+    main.onclick = async e => {
+      const j = e.target.closest("[data-jump]"), al = e.target.closest("[data-allow]"), un = e.target.closest("[data-unallow]");
+      if (j) {
+        q("fbClass").value = j.dataset.jump;
+        await load();
+        q("fbSearch").value = j.dataset.reg; applyFilter();
+        q("fbBox").scrollIntoView({ behavior: "smooth" });
+      } else if (al) {
+        const reason = prompt("Reason for allowing this student to see results (optional):");
+        if (reason === null) return;
+        const { error } = await sb.from("results_exceptions").upsert({ student_id: +al.dataset.allow, year, term, reason: reason.trim() || null }, { onConflict: "student_id,year,term" });
+        if (error) return toast(error.message, true);
+        toast("This student can now see their results."); load();
+      } else if (un) {
+        const { error } = await sb.from("results_exceptions").delete().eq("student_id", +un.dataset.unallow).eq("year", year).eq("term", term);
+        if (error) return toast(error.message, true);
+        toast("Exception removed."); load();
+      }
+    };
+  }
   load();
 }
 
 async function dashAccounts() {
-  main.innerHTML = pageHead(`Good day, ${first(me.full_name)}`, "Accounts office") + `<div class="cards">${[1, 2, 3].map(() => `<div class="stat skel"></div>`).join("")}</div>`;
+  main.innerHTML = staffCover("Accounts office", "Fees and payments this term.") + `<div class="cards">${[1, 2, 3].map(() => `<div class="stat skel"></div>`).join("")}</div>`;
   const [ov, pays, anns] = await Promise.all([
     sb.rpc("fees_overview", { p_year: thisYear, p_term: SETTINGS.current_term }).then(r => r.error ? null : r.data),
     sb.from("fee_payments").select("amount,paid_on,method,students(full_name,reg_number)").order("id", { ascending: false }).limit(6).then(r => r.error ? [] : (r.data || [])),
@@ -2350,20 +2602,20 @@ async function dashAccounts() {
   ]);
   if (curModule !== "dashboard") return;
   const exp = ov ? Number(ov.expected) : 0, col = ov ? Number(ov.collected) : 0, need = Number(SETTINGS.results_min_fees_percent ?? 0);
-  main.innerHTML = pageHead(`Good day, ${first(me.full_name)}`, `Accounts office &middot; Term ${SETTINGS.current_term}, ${thisYear}`) + `
+  main.innerHTML = staffCover("Accounts office", "Fees and payments this term.") + `
     <div class="cards">
       ${stat("Expected this term", money(exp), "", "wallet")}
-      ${stat("Collected", money(col), exp ? Math.round(col / exp * 100) + "% of expected" : "", "check", "good")}
+      ${stat("Collected", money(col), exp ? Math.round(col / exp * 100) + "% of expected" : "", "check", "good", exp ? col / exp * 100 : 0)}
       ${stat("Outstanding", money(Math.max(0, exp - col)), "", "clock", exp - col > 0 ? "warn" : "good")}
       ${stat("Results rule", need > 0 ? need + "%" : "Off", need > 0 ? "of fees paid to see results" : "", "shield")}
     </div>
     <div class="grid2">
-      ${panel("Recent payments", pays.length ? `<ul class="plain">${pays.map(p => `<li><b>${money(p.amount)}</b> from ${esc((p.students || {}).full_name || "-")} <span class="hint">${esc(niceDate(p.paid_on))} &middot; ${esc(p.method || "")}</span></li>`).join("")}</ul>` : empty("No payments recorded yet."))}
+      ${panel("Recent payments", pays.length ? `<ul class="plain">${pays.map(p => `<li><b>${money(p.amount)}</b> from ${esc((p.students || {}).full_name || "-")} <span class="hint">${esc(niceDate(p.paid_on))}, ${esc(p.method || "")}</span></li>`).join("")}</ul>` : empty("No payments recorded yet."))}
       <div>
         ${panel("Quick actions", `<div class="quick">
-          <button class="btn" data-go="fees">${icon("wallet")} Record a payment</button>
-          <button class="btn ghost" data-go="balances">${icon("users")} Fee balances</button></div>`)}
-        ${panel("Latest announcements", anns.length ? `<ul class="plain">${anns.map(a => `<li><b>${esc(a.title)}</b><div class="hint">${esc(niceDate(a.created_at))}</div></li>`).join("")}</ul>` : empty("No announcements yet."))}
+          <button class="btn" data-go="balances">Record payments</button>
+          <button class="btn ghost" data-go="fees">Set fees</button></div>`)}
+        ${panel("Latest notices", anns.length ? `<ul class="plain">${anns.map(a => `<li><b>${esc(a.title)}</b><div class="hint">${esc(niceDate(a.created_at))}</div></li>`).join("")}</ul>` : empty("No notices yet."))}
       </div>
     </div>`;
 }
@@ -2394,10 +2646,10 @@ async function viewSettings() {
       ${panel("Grading scale", `
         <p>Each row gives the lowest mark for a grade. Keep a row that starts at 0.</p>
         <div id="gRows"></div>
-        <button class="btn ghost sm" type="button" id="gAdd">${icon("plus")} Add a grade</button>`)}
-      <button class="btn" type="submit" id="setSave">Save settings</button>
+        <button class="btn ghost sm" type="button" id="gAdd">Add a grade</button>`)}
+      <div class="savebar"><span class="hint">Changes apply to everyone as soon as you save.</span><button class="btn" type="submit" id="setSave">Save settings</button></div>
     </form>
-    ${panel("Demo data", `<p>Adds one class, seven subjects, eight students, marks, attendance, a timetable, fees and an announcement so you can see the portal working. Demo students use reg numbers starting with DEMO-.</p><button class="btn ghost" id="demo">Add demo data</button>`)}`;
+    ${panel("Demo data", `<p>Adds one class, seven subjects, eight students, marks, attendance, a timetable, fees and a notice so you can see the portal working. Demo students use reg numbers starting with DEMO-.</p><button class="btn ghost" id="demo">Add demo data</button>`)}`;
   const drawGrades = () => {
     q("gRows").innerHTML = g.map((r, i) => `<div class="grades-grid">
       <input type="number" min="0" max="100" value="${r.min}" data-gi="${i}" data-gk="min" aria-label="Minimum mark">
@@ -2451,7 +2703,7 @@ async function viewPublish() {
     ${panel("Release settings", `
       <div class="row">
         <label>Release on (leave empty to publish now)<input id="pbWhen" type="datetime-local"></label>
-        <label class="check"><input type="checkbox" id="pbAnn" checked> Post an announcement</label>
+        <label class="check"><input type="checkbox" id="pbAnn" checked> Post a notice</label>
       </div>
       <p class="hint" style="margin-top:.7rem">Choose a future date and time to release results when the holidays start. Parents and students can then see them from that moment.</p>`)}
     <div id="pbBox">${empty("Loading...")}</div>`;
@@ -2493,7 +2745,7 @@ async function viewPublish() {
       await sb.from("announcements").insert({
         title: future ? `Term ${term} ${year} results will be released on ${when.toLocaleDateString("en-GB", { day: "numeric", month: "long" })}` : `Term ${term} ${year} results are now available`,
         body: future ? "You will be able to see the results under Results and Report cards from that day." : "You can now see the results under Results and Report cards.",
-        audience: "all" });
+        audience: "all", expires_at: inDays(30) });
     }
     toast(when > new Date() ? "Release scheduled." : `Published for ${ids.length} ${ids.length === 1 ? "class" : "classes"}.`);
     load();
@@ -2518,6 +2770,230 @@ async function viewPublish() {
   };
   load();
 }
+/* ===================== payment receipts and account statement ===================== */
+const pad = (n, w) => String(n).padStart(w, "0");
+const receiptNo = p => p.reference || "REC-" + pad(p.id, 6);
+const invoiceNo = i => `INV-${i.year}-T${i.term}-${pad(i.id, 4)}`;
+const payText = p => p.description || `School fees, Term ${p.term}, ${p.year}`;
+async function accountStatement(id) {
+  const { data, error } = await sb.rpc("get_account_statement", { p_student_id: id });
+  if (error) throw error;
+  return data;
+}
+const crucialFoot = `<footer class="site-foot"><b>Crucial Tech</b></footer>`;
+
+async function viewReceipts() {
+  if (!needKid()) return;
+  const k = kid();
+  main.innerHTML = pageHead("Payment receipts", `All payments made for ${esc(k.full_name)}.`) +
+    `<div id="rcView"></div><div id="rcBox">${empty("Loading...")}</div>`;
+  const st = await accountStatement(k.id);
+  if (activeKid !== k.id) return;
+  const pays = (st.payments || []).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)) || b.id - a.id);
+  if (!pays.length) { q("rcBox").innerHTML = empty("No payments have been recorded yet. When the accounts office records a payment, its receipt appears here."); return; }
+  const confirmed = pays.filter(p => p.status === "confirmed");
+  q("rcBox").innerHTML = `
+    <div class="cards">
+      ${stat("Receipts", String(pays.length), "", "results")}
+      ${stat("Total paid", money(confirmed.reduce((a, p) => a + Number(p.amount), 0)), "", "wallet", "good")}
+    </div>
+    <div class="tablewrap"><table><thead><tr><th>Date</th><th>Receipt no.</th><th>Description</th><th>Method</th><th>Bank</th><th class="num">Amount</th><th>Status</th><th></th></tr></thead><tbody>
+    ${pays.map(p => `<tr>
+      <td>${esc(niceDate(p.date))}</td><td><b>${esc(receiptNo(p))}</b></td><td>${esc(payText(p))}</td>
+      <td>${esc(p.method || "-")}</td><td>${esc(p.bank || "-")}</td><td class="num">${money(p.amount)}</td>
+      <td><span class="tag ${p.status === "confirmed" ? "good" : "bad"}">${p.status === "confirmed" ? "Confirmed" : "Reversed"}</span></td>
+      <td class="num"><button class="btn ghost sm" data-rc="${p.id}">View</button></td></tr>`).join("")}
+    </tbody></table></div>`;
+  main.onclick = e => {
+    const b = e.target.closest("[data-rc]");
+    if (!b) return;
+    const p = pays.find(x => x.id === +b.dataset.rc), s = st.student;
+    q("rcView").innerHTML = `
+      <article class="card receipt">
+        <div class="card-head">
+          <div class="card-brand">${SETTINGS.logo_url ? `<img class="card-logo" src="${esc(SETTINGS.logo_url)}" alt="">` : ""}<div><h3>${esc(SCHOOL_NAME)}</h3><div class="sub">Official receipt</div></div></div>
+          <div class="sub" style="text-align:right">Receipt no.<br><b>${esc(receiptNo(p))}</b></div>
+        </div>
+        <div class="who-line">
+          <div><span>Received from</span><b>${esc(s.name)}</b></div>
+          <div><span>Class</span><b>${esc(s.class || "-")}</b></div>
+          <div><span>Reg number</span><b>${esc(s.reg || "-")}</b></div>
+        </div>
+        <dl class="rc-grid">
+          <dt>Date</dt><dd>${esc(niceDate(p.date))}</dd>
+          <dt>Description</dt><dd>${esc(payText(p))}</dd>
+          <dt>Payment method</dt><dd>${esc(p.method || "-")}</dd>
+          ${p.bank ? `<dt>Bank</dt><dd>${esc(p.bank)}</dd>` : ""}
+          <dt>Status</dt><dd>${p.status === "confirmed" ? "Confirmed" : "Reversed"}</dd>
+          <dt>Amount received</dt><dd class="rc-amt">${money(p.amount)}</dd>
+        </dl>
+        <div class="sign"><div>Accounts office</div><div>Date stamp</div><div></div></div>
+      </article>
+      <div class="card-actions" style="margin-bottom:1.2rem"><button class="btn" id="rcPrint">Print this receipt</button> <button class="btn ghost" id="rcClose">Close</button></div>`;
+    q("rcPrint").onclick = () => {
+      document.body.classList.add("print-one");
+      window.addEventListener("afterprint", () => document.body.classList.remove("print-one"), { once: true });
+      window.print();
+    };
+    q("rcClose").onclick = () => { q("rcView").innerHTML = ""; };
+    q("rcView").scrollIntoView({ behavior: "smooth" });
+  };
+}
+
+/* ledger: every invoice (debit) and confirmed payment (credit) in date order, with a running balance */
+function buildLedger(st) {
+  const today = todayStr();
+  const rows = [
+    ...(st.invoices || []).map(i => ({ date: String(i.date), order: 0, id: i.id, ref: invoiceNo(i), description: `${i.description}, Term ${i.term}, ${i.year}`, debit: Number(i.amount), credit: 0 })),
+    ...(st.payments || []).filter(p => p.status === "confirmed").map(p => ({ date: String(p.date), order: 1, id: p.id, ref: receiptNo(p), description: payText(p), debit: 0, credit: Number(p.amount) }))
+  ].sort((a, b) => a.date.localeCompare(b.date) || a.order - b.order || a.id - b.id);
+  let bal = 0, current = 0;
+  rows.forEach(r => { bal += r.debit - r.credit; r.balance = bal; if (r.date <= today) current = bal; });
+  return { rows, debits: rows.reduce((a, r) => a + r.debit, 0), credits: rows.reduce((a, r) => a + r.credit, 0), current, grand: bal };
+}
+/* the fees structure of the student's class: one row per term, one column per fee item */
+function feeStructure(invoices) {
+  const years = [...new Set(invoices.map(i => i.year))].sort((a, b) => b - a);
+  if (!years.length) return null;
+  const year = years.includes(thisYear) ? thisYear : years[0];
+  const list = invoices.filter(i => i.year === year);
+  const descs = [...new Set(list.map(i => i.description))];
+  const terms = [...new Set(list.map(i => i.term))].sort((a, b) => a - b);
+  const rows = terms.map(t => {
+    const cells = descs.map(d => list.filter(i => i.term === t && i.description === d).reduce((a, i) => a + Number(i.amount), 0));
+    return { term: t, cells, total: cells.reduce((a, b) => a + b, 0) };
+  });
+  return { year, descs, rows, totals: descs.map((d, k) => rows.reduce((a, r) => a + r.cells[k], 0)), grand: rows.reduce((a, r) => a + r.total, 0) };
+}
+const num2 = n => Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+/* the fees section for students and parents */
+async function feesFamily() {
+  if (!needKid()) return;
+  const k = kid();
+  main.innerHTML = pageHead("Fees", "Your fees structure, statement and balance.") + `<div id="feeBox">${empty("Loading...")}</div>`;
+  const st = await accountStatement(k.id);
+  if (activeKid !== k.id) return;
+  const L = buildLedger(st), fs = feeStructure(st.invoices || []);
+  if (!L.rows.length && !fs) { q("feeBox").innerHTML = empty("The school has not set up fees for this class yet."); return; }
+  const cur = SETTINGS.currency || "";
+  const balTone = n => n > 0 ? "warn" : "good";
+  q("feeBox").innerHTML = `
+    <div class="print-only"><h3>${esc(SCHOOL_NAME)}: fees statement</h3><p>Printed ${esc(niceDate(todayStr()))}</p></div>
+    ${panel("Financial information", `<dl class="kv"><dt>Reg number</dt><dd>${esc(st.student.reg || "-")}</dd><dt>Name</dt><dd>${esc(st.student.name)}</dd><dt>Class</dt><dd>${esc(st.student.class || "-")}</dd></dl>`)}
+    <div class="cards">
+      ${stat("Total debits", num2(L.debits), "All invoices (charges)", "", "bad")}
+      ${stat("Total credits", num2(L.credits), "All payments received", "", "good")}
+      ${stat("Transactions", String(L.rows.length), "", "")}
+      ${stat("Current balance", num2(L.current), L.current > 0 ? "Amount still owed" : L.current < 0 ? "Paid ahead (in credit)" : "Nothing owed", "", balTone(L.current))}
+    </div>
+    ${fs ? panel(`Fees structure for ${st.student.class || "your class"}, ${fs.year}`, `
+      <div class="tablewrap" style="margin:0"><table class="pivot"><thead><tr><th>Term</th>${fs.descs.map(d => `<th class="num">${esc(d)}</th>`).join("")}<th class="num">Total fees</th></tr></thead><tbody>
+      ${fs.rows.map(r => `<tr><td>Term ${r.term}</td>${r.cells.map(c => `<td class="num">${c ? num2(c) : "-"}</td>`).join("")}<td class="num"><b>${num2(r.total)}</b></td></tr>`).join("")}
+      </tbody><tfoot><tr><td>Year total</td>${fs.totals.map(t => `<td class="num">${num2(t)}</td>`).join("")}<td class="num">${num2(fs.grand)}</td></tr></tfoot></table></div>`) : ""}
+    ${panel(`${cur} transactions`, L.rows.length ? `
+      <div class="tablewrap" style="margin:0"><table><thead><tr><th>Date</th><th>Reference</th><th>Description</th><th class="num">Debit</th><th class="num">Credit</th><th class="num">Balance</th></tr></thead><tbody>
+      ${L.rows.map(r => `<tr><td>${esc(niceDate(r.date))}</td><td>${esc(r.ref)}</td><td>${esc(r.description)}</td>
+        <td class="num dr">${r.debit ? num2(r.debit) : ""}</td><td class="num cr">${r.credit ? num2(r.credit) : ""}</td><td class="num"><b>${num2(r.balance)}</b></td></tr>`).join("")}
+      </tbody><tfoot>
+        <tr><td colspan="5">Current balance</td><td class="num">${num2(L.current)}</td></tr>
+        <tr><td colspan="5">Grand balance</td><td class="num">${num2(L.grand)}</td></tr>
+      </tfoot></table></div>` : empty("There are no charges or payments on this account yet."))}
+    <p class="hint">Debits are fees charged to the account (red). Credits are payments received (green). The balance is what is owed after each entry, and a negative balance means the account is in credit. The current balance counts entries up to today. The grand balance also counts invoices dated later.</p>
+    <div class="quick" style="margin-top:1rem"><button class="btn" id="stPrint">Print statement</button><button class="btn ghost" data-go="receipts">Payment receipts</button></div>`;
+  q("stPrint").onclick = () => window.print();
+}
+
+/* ===================== user manual ===================== */
+const MANUAL = {
+  student: { title: "Students", items: [
+    ["Create your account", `<ol><li>On the first page choose <b>I am a student</b>, then <b>Create An Account</b>.</li><li>Type your registration number and your full name, the way the school has them. If they do not match the school list, you cannot continue.</li><li>Choose your date of birth, then add your home address, your email, a clear photo of your student ID and a password of your own (at least 8 characters).</li><li>Press <b>Create account</b>. You go straight in.</li></ol>`],
+    ["Sign in again later", `<p>Choose <b>I am a student</b>, then type your registration number and your password.</p>`],
+    ["I forgot my password", `<p>Visit the school office with your student ID. They reset your account, and then you use <b>Create An Account</b> again with a new password.</p>`],
+    ["Home page", `<p>The home page shows your latest average, your attendance, your fees balance, the newest notices and today's lessons. The numbers update by themselves.</p>`],
+    ["See my results and report card", `<p>Open <b>Results and performance</b> for charts by term and by subject, or <b>Report cards</b> to see and print the full report. Results appear only after the school <b>publishes</b> them at the end of the term. If your family has paid less than the fees the school asks for, the page tells you how much has been paid so far and asks you to see the accounts office.</p>`],
+    ["Attendance, timetable and subjects", `<p><b>Attendance</b> shows your rate this year and each day you were late or absent. <b>Timetable</b> shows your lessons by day, with today marked. <b>Subjects</b> lists your subjects and teachers.</p>`],
+    ["Fees, statement and receipts", `<p><b>Fees</b> shows your fees structure for the year, then a statement of every charge (debit, red) and payment (credit, green) with a running balance, ending with your current and grand balance. A negative balance means you have paid ahead. <b>Payment receipts</b> lists every payment with its receipt number, and you can print each one.</p>`],
+    ["Read notices", `<p>Open <b>Notices</b> for news from the school. Pinned notices are listed first; press <b>Learn more</b> to read one. If a notice has a PDF or a picture, open it from the notice.</p>`],
+    ["Change my details or password", `<p>Open <b>My profile</b> and press <b>Edit Profile</b> to change your address, email, phone or photo. Use <b>Change password</b> at the bottom of the menu to choose a new password.</p>`]
+  ] },
+  parent: { title: "Parents and guardians", items: [
+    ["Join the portal", `<ol><li>The school gives you a one-time <b>invitation code</b>. It is tied to your email address.</li><li>Open the portal, choose <b>I am a parent</b>, then <b>First time here?</b>.</li><li>Type your email, the code and a password of your own. Your children are already linked.</li></ol>`],
+    ["Switch between my children", `<p>If you have more than one child at the school, choose the child from the name box at the top. Every page then shows that child. <b>Linked children</b> gives a short summary of each child.</p>`],
+    ["Results and report cards", `<p>Open <b>Academic performance</b> for charts and <b>Report cards</b> to see and print the report. Results appear only after the school publishes them at the end of the term. If fees paid are below what the school requires, the report stays hidden and the page shows how much has been paid. Please see the accounts office.</p>`],
+    ["Attendance, timetable and subjects", `<p>These pages show your child's register, weekly lessons and teachers.</p>`],
+    ["Fees, statement and receipts", `<p><b>Fees</b> shows the fees structure for the year, then a statement of every charge (debit, red) and payment (credit, green) with a running balance, ending with the current and grand balance. <b>Payment receipts</b> lists each payment with its receipt number and lets you print it.</p>`],
+    ["Read notices", `<p>Open <b>Notices</b> for news from the school. Pinned notices are listed first; press <b>Learn more</b> to read one. If a notice has a PDF or a picture, open it from the notice.</p>`],
+    ["Another child is missing", `<p>Ask the school office to link the child using the child's registration number.</p>`]
+  ] },
+  teacher: { title: "Teachers", items: [
+    ["Join the portal", `<ol><li>The administrator gives you an invitation code for your email.</li><li>Choose <b>I am a teacher or staff member</b>, then <b>First time here?</b>.</li><li>Type your email, the code and a password of your own.</li></ol>`],
+    ["My classes", `<p><b>My classes</b> lists the classes and subjects the administrator gave you. Press <b>Student list</b> on a class to see its students. If a class is missing, ask the administrator to assign it.</p>`],
+    ["Enter marks", `<ol><li>Open <b>Enter marks</b>. Choose the class, subject, term and year.</li><li>Type each mark out of 100. Press Enter to jump to the next student. The grade appears as you type.</li><li>Press <b>Save marks</b>. You can come back and change marks later.</li></ol><p>Marks are private. Students and parents see them only after the administrator publishes the term.</p>`],
+    ["Write teacher comments", `<p>Open <b>Teacher comments</b>, choose the class, term and year. Press <b>Suggest comments from marks</b> to fill empty boxes, edit what you like and press <b>Save comments</b>. The comments print on the report card.</p>`],
+    ["Record attendance", `<p>Open <b>Record attendance</b>, choose the class and date. Everyone starts as present. Tap <b>L</b> for late or <b>A</b> for absent, then press <b>Save register</b>.</p>`],
+    ["Class analytics", `<p>Shows the class average, highest and lowest marks, pass rate, grade spread and the top and bottom students for a term.</p>`],
+    ["Print report cards", `<p>Open <b>Report cards</b>. Type a registration number for one student, or choose a whole class and press <b>Show whole class</b>, then <b>Print all</b>. In the print window you can choose Save as PDF.</p>`]
+  ] },
+  accounts: { title: "Accounts office", items: [
+    ["Join the portal", `<ol><li>The administrator gives you an invitation code for your email.</li><li>Choose <b>I am a teacher or staff member</b>, then <b>First time here?</b>.</li><li>Type your email, the code and a password of your own.</li></ol>`],
+    ["Set the fees", `<p>Open <b>Set fees</b>. Choose the class, term and year, type what the class pays and the invoice date, and press <b>Save fee</b>. Each fee becomes an invoice on every student's statement in that class.</p>`],
+    ["Record payments", `<ol><li>Open <b>Record payments</b>. Choose the class, the term the money is for, the date received and the method. For a bank transfer, type the bank name.</li><li>Type what each student paid in the <b>Paid now</b> box and a receipt number if you have one. Leave the others empty. Press Enter to jump to the next student.</li><li>Press <b>Save payments</b> and check the total.</li></ol><p>To find a student in another class, type their name or number in <b>Find a student in any class</b>.</p>`],
+    ["Correct a mistake", `<p>Open <b>Set fees</b> and find the payment under <b>Recent payments</b>. Press <b>Reverse</b>. The payment stays on record as reversed, but it no longer counts toward the balance. Then record the right payment again.</p>`],
+    ["The results rule", `<p>The administrator sets the share of fees (for example 50%) that must be paid before a student or parent can see results. <b>Record payments</b> shows who is held. Press <b>Allow results</b> for a student who should see their results anyway, for example a bursary pupil.</p>`]
+  ] },
+  admin: { title: "Administrator", items: [
+    ["Set up the school", `<p>The home page shows a short checklist: set the school name and logo, add classes and subjects, import the student list, invite teachers and invite the accounts office. Follow it in order.</p>`],
+    ["Import the students", `<p>Open <b>Students</b>. Save the Excel list as CSV with the headings <b>reg_number</b>, <b>full_name</b> and <b>class</b> (add <b>dob</b> if you have dates of birth). Choose the file and press <b>Import students</b>. Students can create an account only if their number and name are on this list.</p>`],
+    ["Invite teachers, parents and the accounts office", `<p>Open <b>Teachers</b>, <b>Parents</b> or <b>User accounts</b>. Type the person's name and email and press <b>Create invitation</b>. Give them the code. They choose the right sign-in, press <b>First time here?</b> and set their own password. For parents, also type the child's registration number so the child is linked. Then give each teacher their classes and subjects under <b>Teachers</b>.</p>`],
+    ["Student accounts", `<p>Students open their own accounts. <b>Registrations</b> shows each new account with the ID photo. If something looks wrong, or a student forgot their password, press <b>Reset account</b>; the student then registers again.</p>`],
+    ["Timetables and attendance", `<p>Build each class timetable under <b>Manage timetables</b>. <b>Attendance overview</b> is read-only because teachers take the registers.</p>`],
+    ["Publish results", `<p>Open <b>Publish results</b>, choose the year and term, then publish a class or all classes. Choose a future date and time to release results when the holidays start. You can unpublish if a mistake is found. Teachers keep entering marks until you publish.</p>`],
+    ["Settings", `<p>Change the school name, motto, logo, current year and term, the grading scale, whether students (or only parents) see results, and the share of fees needed before results are shown.</p>`],
+    ["Post notices with a PDF or picture", `<p>Open <b>Notices</b>, type a title and a message, and choose who should see it. To share a letter, timetable or poster, use <b>Attach a file</b> and pick a PDF or a picture (JPG, PNG or WebP, up to 10 MB). Choose how long it shows with <b>Show this notice for</b> (one week to three months, a last day you pick, or until you delete it). When time is up it disappears for everyone and is deleted with its file. <b>Extend 30 days</b> keeps a notice longer. Tick <b>Pin to the top</b> for important notices; pinned notices appear first, and people press <b>Learn more</b> to read them.</p>`],
+    ["What the administrator does not do", `<p>By design the administrator does not enter marks, attendance, comments or fees. Teachers do the first three and the accounts office handles fees. You can see all of them.</p>`]
+  ] }
+};
+const MANUAL_HELP = [
+  ["I cannot see my child's or my results", `<p>There are three possible reasons. The school has not published the term yet. Fees paid are below what the school requires, in which case the page shows how much has been paid. Or the school shows results to parents only. The school office can explain which one applies.</p>`],
+  ["Create An Account says my name does not match", `<p>Type your name the way the school wrote it on its list, including middle names. The order of the names does not matter. If it still fails, ask the school office to check your record.</p>`],
+  ["My invitation code does not work", `<p>Use the same email address the school invited, and type the code exactly as given. Each code works once. Ask the administrator for a new one if needed.</p>`],
+  ["The page is slow or will not load", `<p>The portal needs an internet connection. Check your data, then refresh the page. Your work is saved only after you press a Save button.</p>`]
+];
+function manualBody(role) {
+  const m = MANUAL[role];
+  return `<h3>${esc(m.title)}</h3>` + m.items.map((it, i) => `<details class="mn" ${i === 0 ? "open" : ""}><summary>${esc(it[0])}</summary><div class="mn-body">${it[1]}</div></details>`).join("");
+}
+const manualHelpHtml = () => panel("Common problems", MANUAL_HELP.map(it => `<details class="mn"><summary>${esc(it[0])}</summary><div class="mn-body">${it[1]}</div></details>`).join(""));
+const printManual = scope => { scope.querySelectorAll("details").forEach(d => { d.open = true; }); window.print(); };
+
+function viewManual() {
+  const roles = me.role === "admin" ? ["admin", "teacher", "accounts", "student", "parent"] : [me.role];
+  main.innerHTML = pageHead("User manual", "Step-by-step help for using the portal.") + `
+    <div class="filters">
+      ${roles.length > 1 ? `<label>Show the guide for<select id="mnRole">${roles.map(r => `<option value="${r}">${esc(MANUAL[r].title)}</option>`).join("")}</select></label>` : ""}
+      <button class="btn ghost" id="mnPrint">Print this guide</button>
+    </div>
+    <div id="mnBody"></div>${manualHelpHtml()}`;
+  const draw = () => { q("mnBody").innerHTML = panel("", manualBody(roles.length > 1 ? q("mnRole").value : roles[0])); };
+  if (roles.length > 1) q("mnRole").onchange = draw;
+  q("mnPrint").onclick = () => printManual(main);
+  draw();
+}
+
+function showManualPublic() {
+  const roles = ["student", "parent", "teacher", "accounts", "admin"];
+  app.innerHTML = `<div class="auth"><div class="manual-page">
+    <div class="filters"><button class="btn ghost" id="mnBack">Back</button></div>
+    <div class="page-head"><h2>User manual</h2><p>How to use the ${esc(SCHOOL_NAME)} portal. Choose who you are.</p></div>
+    <div class="filters"><label>I am a<select id="mnRole">${roles.map(r => `<option value="${r}">${esc(MANUAL[r].title)}</option>`).join("")}</select></label></div>
+    <div id="mnBody"></div>${manualHelpHtml()}${crucialFoot}</div></div>`;
+  const draw = () => { q("mnBody").innerHTML = panel("", manualBody(q("mnRole").value)); };
+  q("mnRole").onchange = draw;
+  q("mnBack").onclick = showLanding;
+  draw();
+}
+
 
 /* ===================== module registry: add new pages here ===================== */
 const isStaffRole = () => me.role === "admin" || me.role === "teacher";
@@ -2528,12 +3004,15 @@ defineModule("password", "Change password", "key", viewPassword);
 defineModule("children", "Linked children", "users", viewChildren);
 defineModule("subjects", "Subjects", "book", viewSubjects);
 defineModule("timetable", "Timetable", "cal", () => (isStaffRole() ? ttStaff : ttFamily)(), r => r === "admin" ? "Manage timetables" : r === "teacher" ? "My timetable" : "Timetable");
-defineModule("attendance", "Attendance", "check", () => (isStaffRole() ? attStaff : attFamily)(), r => r === "teacher" ? "Record attendance" : "Attendance");
+defineModule("attendance", "Attendance", "check", () => (me.role === "teacher" ? attStaff : me.role === "admin" ? attAdmin : attFamily)(), r => r === "teacher" ? "Record attendance" : r === "admin" ? "Attendance overview" : "Attendance");
 defineModule("results", "Results", "chart", viewResults, r => r === "parent" ? "Academic performance" : "Results and performance");
 defineModule("reportcards", "Report cards", "results", viewReports);
-defineModule("fees", "Fees", "wallet", () => (me.role === "admin" || me.role === "accounts" ? viewFees : feesFamily)(), r => r === "admin" ? "Fees overview" : "Fees");
-defineModule("balances", "Fee balances", "users", viewFeeBalances);
-defineModule("announcements", "Announcements", "megaphone", viewAnnouncements);
+defineModule("receipts", "Payment receipts", "results", viewReceipts);
+defineModule("statement", "Fees statement", "wallet", feesFamily);
+defineModule("manual", "User manual", "book", viewManual);
+defineModule("fees", "Fees", "wallet", () => (me.role === "admin" || me.role === "accounts" ? viewFees : feesFamily)(), r => r === "admin" ? "Fees overview" : r === "accounts" ? "Set fees" : "Fees");
+defineModule("balances", "Fee balances", "users", viewFeeBalances, r => r === "accounts" ? "Record payments" : "Fee balances");
+defineModule("announcements", "Notices", "megaphone", viewAnnouncements);
 defineModule("myclasses", "My classes", "users", viewMyClasses);
 defineModule("marks", "Enter marks", "pencil", viewMarks, r => r === "admin" ? "Marks" : "Enter marks");
 defineModule("comments", "Teacher comments", "chat", viewComments);
